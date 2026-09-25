@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SperoCare</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+Thambi+2:wght@600;800&family=Noto+Sans+Tamil:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --root:20px; --bw:1.5px;
+  --bg:#F7F6F0; --surface:#FFFFFF; --surface2:#E7EFE6; --ink:#1B2421; --ink2:#45524C; --line:#C9D2C8;
+  --accent:#1B6B52; --accent-ink:#FFFFFF; --good:#1B7F4B; --good-ink:#FFFFFF; --bad:#C62828; --bad-ink:#FFFFFF;
+  --c1:#1B6B52; --c2:#D98E04; --c3:#3B7DD8; --focus:#0B57D0;
+  color-scheme:light;
+}
+html{height:100%;font-size:var(--root);scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:'Atkinson Hyperlegible','Noto Sans Tamil',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:1rem;line-height:1.5;transition:background .25s,color .25s}
+html[lang=ta] body{font-family:'Noto Sans Tamil','Atkinson Hyperlegible',system-ui,sans-serif;line-height:1.65}
+[hidden]{display:none!important}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+button:disabled{cursor:default}
+h1,h2,h3,.disp{font-family:'Baloo Thambi 2','Noto Sans Tamil','Atkinson Hyperlegible',sans-serif;font-weight:800;line-height:1.2;margin:0}
+h1{font-size:clamp(1.7rem,6vw,2.3rem)}
+h2{font-size:1.35rem}
+h3{font-size:1.1rem}
+p{margin:.4rem 0}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.sm{color:var(--ink2);font-size:.95rem}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.wrap{width:min(100% - 1.5rem,60rem);margin-inline:auto}
+main{padding:1rem 0 8rem;outline:none}
+.sec{margin:1.7rem 0 .6rem}
+
+/* header + nav (fixed px so text-size setting scales content, not chrome) */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--bg);border-bottom:var(--bw) solid var(--line)}
+.top .in{display:flex;align-items:center;gap:.45rem;padding:.4rem 0;flex-wrap:wrap}
+.brand{margin-right:auto;background:none;border:0;padding:.2rem .1rem;color:var(--ink);font:800 26px/1 'Baloo Thambi 2','Noto Sans Tamil',sans-serif;letter-spacing:-.01em}
+.hb{min-height:44px;min-width:44px;padding:0 .75rem;border-radius:12px;border:var(--bw) solid var(--line);background:var(--surface);color:var(--ink);font:700 16px/1 'Atkinson Hyperlegible','Noto Sans Tamil',sans-serif;display:inline-flex;align-items:center;justify-content:center;gap:.4rem}
+.hb svg{width:20px;height:20px}
+.hb.help{background:var(--bad);border-color:var(--bad);color:var(--bad-ink)}
+.hb .aa{font-weight:800;font-size:18px}.hb .aa small{font-size:13px}
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--surface);border-top:var(--bw) solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.nav .in{display:flex;width:min(100%,42rem);margin-inline:auto}
+.nb{flex:1;min-height:66px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:0;color:var(--ink2);font:700 13px/1.1 'Atkinson Hyperlegible','Noto Sans Tamil',sans-serif;position:relative;padding:6px 2px}
+.nb svg{width:28px;height:28px}
+.nb[aria-current=page]{color:var(--accent)}
+.nb[aria-current=page]::before{content:'';position:absolute;top:0;left:22%;right:22%;height:4px;background:var(--accent);border-radius:0 0 4px 4px}
+
+/* controls */
+.ic{width:1.3em;height:1.3em;flex:none}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;min-height:3.2rem;padding:.55rem 1.15rem;border-radius:1rem;border:var(--bw) solid var(--line);background:var(--surface);color:var(--ink);font-weight:700;line-height:1.2;text-align:center}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.good{background:var(--good);border-color:var(--good);color:var(--good-ink)}
+.btn.bad{background:var(--bad);border-color:var(--bad);color:var(--bad-ink)}
+.btn.block{width:100%}
+.btn.lg{min-height:4rem;font-size:1.15rem}
+.btn.sm{min-height:2.6rem;padding:.3rem .8rem;font-size:.9rem;border-radius:.8rem}
+.link{background:none;border:0;padding:.3rem 0;color:var(--accent);font-weight:700;text-decoration:underline;text-underline-offset:3px}
+.field{width:100%;min-height:3.2rem;padding:.55rem .9rem;border-radius:1rem;border:var(--bw) solid var(--line);background:var(--surface);color:var(--ink)}
+.field::placeholder{color:var(--ink2);opacity:.8}
+.lab{display:block;font-weight:700;margin:1rem 0 .35rem}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.panel{background:var(--surface);border:var(--bw) solid var(--line);border-radius:1.2rem;padding:1rem 1.1rem}
+.row{display:flex;align-items:center;gap:.8rem}
+.grow1{flex:1;min-width:0}
+
+/* intro */
+.intro{min-height:100%;display:flex;align-items:center;justify-content:center;padding:1.5rem 1rem;background:var(--bg)}
+.intro-in{width:min(100%,26rem)}
+.wordmark{font-size:clamp(3.1rem,17vw,5rem);font-weight:800;letter-spacing:-.02em;line-height:1;margin:0 0 1.4rem;color:var(--ink)}
+
+/* home */
+.hello{padding:1.3rem 1.2rem 1.4rem;background:var(--surface2);border-radius:1.6rem;margin-top:.3rem}
+.hello h1{font-size:clamp(2.4rem,10vw,3.8rem);letter-spacing:-.01em;margin:.05rem 0 .2rem;overflow-wrap:anywhere}
+.hello-mic{display:flex;align-items:center;gap:1rem;margin-top:1.1rem}
+.mic-big{flex:none;width:5.6rem;height:5.6rem;border-radius:50%;background:var(--accent);color:var(--accent-ink);border:0;display:grid;place-items:center;box-shadow:0 0 0 .45rem color-mix(in srgb,var(--accent) 24%,transparent)}
+.mic-big svg{width:2.5rem;height:2.5rem}
+.msgcard{margin-top:1rem;border:var(--bw) solid var(--accent);border-radius:1.2rem;padding:1rem 1.1rem;background:var(--surface)}
+.msgcard .from{font-weight:800}
+.goals{display:grid;gap:.6rem}
+.goal{display:flex;align-items:center;gap:.9rem;width:100%;text-align:left;min-height:3.8rem;padding:.6rem .9rem;border-radius:1.1rem;border:var(--bw) solid var(--line);background:var(--surface);font-weight:700}
+.tick{flex:none;width:2.2rem;height:2.2rem;border-radius:50%;border:2.5px solid var(--ink2);display:grid;place-items:center;color:var(--good-ink)}
+.tick.on{background:var(--good);border-color:var(--good)}
+.tick svg{width:1.2rem;height:1.2rem}
+.nextrem{display:flex;align-items:center;gap:.9rem;padding:.9rem 1rem;border-radius:1.1rem;background:var(--surface2)}
+.big-e{font-size:2.2rem;line-height:1}
+.links{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1.4rem}
+
+/* talk */
+.chatlog{display:flex;flex-direction:column;gap:.7rem;margin-top:1rem;min-height:35vh}
+.b{max-width:90%;padding:.7rem 1rem;border-radius:1.2rem;white-space:pre-wrap;overflow-wrap:anywhere}
+.b.s{background:var(--surface);border:var(--bw) solid var(--line);align-self:flex-start;border-bottom-left-radius:.3rem}
+.b.u{background:var(--accent);color:var(--accent-ink);align-self:flex-end;border-bottom-right-radius:.3rem}
+.b .ls{display:inline-flex;align-items:center;gap:.4rem;margin:.4rem .6rem 0 0;padding:.2rem 0;background:none;border:0;color:var(--accent);font-weight:700;font-size:.9rem}
+.b .btn{margin-top:.5rem}
+.typing{display:flex;gap:.3rem;padding:.9rem 1rem}
+.typing i{width:.55rem;height:.55rem;border-radius:50%;background:var(--ink2);animation:bl 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes bl{0%,60%,100%{opacity:.25}30%{opacity:1}}
+.chips{display:flex;flex-wrap:wrap;gap:.5rem;margin:1rem 0 .3rem}
+.chip{min-height:2.7rem;padding:.3rem .9rem;border-radius:2rem;border:var(--bw) solid var(--line);background:var(--surface);font-weight:700;font-size:.9rem}
+.composer{position:sticky;bottom:calc(66px + env(safe-area-inset-bottom,0px));display:flex;gap:.5rem;align-items:center;padding:.6rem 0;background:var(--bg)}
+.micbtn{flex:none;width:3.6rem;height:3.6rem;border-radius:50%;border:0;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center}
+.micbtn svg{width:1.7rem;height:1.7rem}
+.listenbox{display:flex;align-items:center;gap:1rem;padding:.9rem 1rem;margin:.5rem 0;border-radius:1.2rem;background:var(--surface2);border:var(--bw) solid var(--accent)}
+.pulse{flex:none;width:3.4rem;height:3.4rem;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;animation:pl 1.2s infinite}
+.pulse svg{width:1.6rem;height:1.6rem}
+@keyframes pl{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 50%,transparent)}100%{box-shadow:0 0 0 1.1rem transparent}}
+.lt{color:var(--ink2);min-height:1.5em;overflow-wrap:anywhere}
+
+/* mood */
+.moods{display:grid;grid-template-columns:repeat(2,1fr);gap:.8rem;margin-top:1rem}
+.mb{display:flex;flex-direction:column;align-items:center;gap:.3rem;padding:1rem .5rem;min-height:7.5rem;border-radius:1.3rem;border:var(--bw) solid var(--line);background:var(--surface);font-weight:800;font-size:1.1rem}
+.mb span{font-size:3rem;line-height:1}
+.mb.sel{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent)}
+
+/* reminders */
+.cats{display:flex;flex-wrap:wrap;gap:.5rem}
+.catb{display:flex;flex-direction:column;align-items:center;min-width:4.6rem;padding:.5rem .4rem;border-radius:1rem;border:var(--bw) solid var(--line);background:var(--surface);font-size:.8rem;font-weight:700}
+.catb span{font-size:1.7rem;line-height:1.2}
+.catb[aria-pressed=true]{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent)}
+.rem{display:flex;align-items:center;gap:.8rem;padding:.8rem .9rem;border-radius:1.1rem;background:var(--surface);border:var(--bw) solid var(--line);margin-bottom:.6rem}
+.rem.done{background:var(--surface2)}
+.rem .tt{font-weight:800}
+.rem.done .tt{text-decoration:line-through;text-decoration-thickness:2px}
+
+/* games */
+.glist{display:grid;gap:.7rem;margin-top:1rem}
+.grow{display:flex;align-items:center;gap:1rem;width:100%;text-align:left;padding:.9rem 1rem;min-height:5rem;border-radius:1.2rem;border:var(--bw) solid var(--line);background:var(--surface)}
+.grow .gi{font-size:2.3rem;line-height:1;flex:none;width:3rem;text-align:center}
+.grow small{display:block;color:var(--ink2);font-size:.85rem;line-height:1.35}
+.grow b{font-size:1.1rem}
+.badge{flex:none;padding:.15rem .6rem;border-radius:1rem;background:var(--surface2);font-weight:800;font-size:.85rem}
+.phead{display:flex;align-items:center;gap:.8rem;margin-bottom:.8rem}
+.dots{display:flex;gap:.4rem;margin:.3rem 0 .8rem}
+.dots i{flex:1;height:.55rem;border-radius:1rem;background:var(--line)}
+.dots i.cur{background:var(--ink2)}.dots i.ok{background:var(--good)}.dots i.no{background:var(--bad)}
+.q{font:800 1.3rem/1.3 'Baloo Thambi 2','Noto Sans Tamil',sans-serif;margin:.4rem 0 .8rem}
+.pic{font-size:min(30vw,8.5rem);line-height:1.15;text-align:center;padding:.8rem;background:var(--surface);border:var(--bw) solid var(--line);border-radius:1.6rem;margin-bottom:1rem}
+.photo{display:block;width:min(72vw,14rem);aspect-ratio:1;object-fit:cover;border-radius:1.6rem;margin:0 auto 1rem;border:var(--bw) solid var(--line)}
+.opts{display:grid;gap:.6rem}
+.opt{display:flex;align-items:center;justify-content:space-between;gap:.6rem;width:100%;min-height:4rem;padding:.6rem 1rem;text-align:left;border-radius:1.1rem;border:var(--bw) solid var(--line);background:var(--surface);font-weight:800;font-size:1.15rem}
+.opt small{display:block;font-weight:400;color:var(--ink2);font-size:.85rem}
+.opt.ok{background:var(--good);border-color:var(--good);color:var(--good-ink)}
+.opt.ok small{color:inherit}
+.opt.no{background:var(--bad);border-color:var(--bad);color:var(--bad-ink)}
+.opt.no small{color:inherit}
+.opt:disabled:not(.ok):not(.no){opacity:.55}
+.yn{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin:.4rem 0}
+.ynb{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.4rem;min-height:7rem;border-radius:1.4rem;border:0;font:800 1.5rem/1 'Baloo Thambi 2','Noto Sans Tamil',sans-serif}
+.ynb svg{width:2.6rem;height:2.6rem;stroke-width:3}
+.ynb.good{background:var(--good);color:var(--good-ink)}
+.ynb.bad{background:var(--bad);color:var(--bad-ink)}
+.ynb:disabled{opacity:.35}
+.fb{margin:1rem 0 .8rem;padding:.8rem 1rem;border-radius:1.1rem;font-weight:800;font-size:1.1rem}
+.fb.ok{background:var(--good);color:var(--good-ink)}
+.fb.no{background:var(--surface2);border:2px solid var(--bad)}
+.pgrid{display:grid;grid-template-columns:repeat(var(--cols),minmax(0,1fr));gap:.55rem;margin:.6rem 0}
+.pc{min-width:0;aspect-ratio:1;border-radius:1rem;border:var(--bw) solid var(--accent);background:var(--accent);color:var(--accent-ink);font-size:min(9vw,2.7rem);font-weight:800;display:grid;place-items:center;padding:0}
+.pc.up{background:var(--surface);color:var(--ink);border-color:var(--ink2)}
+.pc.done{background:var(--surface2);border-color:var(--good);opacity:.85}
+.mgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.6rem;margin:.6rem 0}
+.mt{min-width:0;aspect-ratio:1;display:grid;place-items:center;font-size:min(14vw,3.6rem);background:var(--surface);border:var(--bw) solid var(--line);border-radius:1.2rem}
+.mt.q0{background:var(--surface2);border-style:dashed;font-weight:800;color:var(--ink2)}
+.cd{display:flex;align-items:center;gap:.6rem;margin:.6rem 0 1rem;font-weight:800}
+.cd b{font:800 2.2rem/1 'Baloo Thambi 2',sans-serif}
+.opics{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.opic{min-width:0;display:flex;flex-direction:column;align-items:center;gap:.2rem;min-height:7.5rem;padding:.6rem;border-radius:1.2rem;border:var(--bw) solid var(--line);background:var(--surface);font-size:3.2rem;line-height:1.15}
+.opic small{font-size:.85rem;font-weight:700}
+.opic.ok{background:var(--good);border-color:var(--good);color:var(--good-ink)}
+.opic.no{background:var(--bad);border-color:var(--bad);color:var(--bad-ink)}
+.result{text-align:center;padding:1.2rem .5rem}
+.stars{font-size:3.4rem;line-height:1;color:var(--c2);letter-spacing:.2rem}
+.result .btn{margin-top:.6rem}
+
+/* progress + dashboard */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(8.5rem,1fr));gap:.6rem;margin:1rem 0}
+.kpi{padding:.8rem .9rem;border-radius:1.1rem;background:var(--surface);border:var(--bw) solid var(--line)}
+.kpi b{display:block;font:800 2rem/1.1 'Baloo Thambi 2',sans-serif}
+.kpi span{color:var(--ink2);font-size:.85rem;line-height:1.3;display:block}
+.dgrid{display:grid;gap:1rem}
+@media(min-width:820px){.dgrid{grid-template-columns:1fr 1fr}.dgrid .wide{grid-column:1/-1}}
+.panel h3{margin-bottom:.5rem}
+.cs{width:100%;height:auto;display:block}
+.donut{max-width:8.5rem;margin:0 auto}
+.tx{fill:var(--ink2);font-size:12px}
+.tx2{fill:var(--ink);font-size:14px;font-weight:700}
+.tv{fill:var(--ink);font-size:12px;font-weight:700}
+.em{font-size:15px}
+.gl{stroke:var(--line);stroke-width:1;stroke-dasharray:3 4}
+.bar{fill:var(--c1)}.bar.now{fill:var(--c2)}
+.track{fill:var(--surface2)}
+.track2{fill:none;stroke:var(--surface2);stroke-width:14}
+.arc{fill:none;stroke:var(--good);stroke-width:14;stroke-linecap:round}
+.dn{fill:var(--ink);font:800 22px 'Baloo Thambi 2',sans-serif}
+.line{fill:none;stroke:var(--c1);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.pt{fill:var(--surface);stroke:var(--c1);stroke-width:3}
+.alert{display:flex;align-items:center;gap:.8rem;padding:.9rem 1rem;margin:1rem 0;border-radius:1.1rem;border:3px solid var(--bad);background:var(--surface)}
+.alert svg{color:var(--bad);width:2rem;height:2rem;flex:none}
+.ev{display:flex;gap:.7rem;padding:.45rem 0;border-bottom:1px dashed var(--line)}
+.ev:last-child{border:0}
+.ev time{flex:none;width:5.2rem;color:var(--ink2);font-size:.85rem;padding-top:.1rem}
+ul.ins{margin:.2rem 0;padding-left:1.2rem}
+ul.ins li{margin:.35rem 0}
+details summary{cursor:pointer;font-weight:700;color:var(--accent);margin-top:.5rem}
+.photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(5.5rem,1fr));gap:.6rem;margin:.6rem 0}
+.ph{position:relative}
+.ph img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:1rem;display:block}
+.ph small{display:block;text-align:center;font-weight:700;font-size:.8rem;line-height:1.2;margin-top:.2rem}
+.ph .x{position:absolute;top:.2rem;right:.2rem;width:2rem;height:2rem;border-radius:50%;border:0;background:var(--bad);color:var(--bad-ink);display:grid;place-items:center}
+.ph .x svg{width:1rem;height:1rem}
+textarea.field{min-height:5rem;resize:vertical}
+
+/* settings */
+.sw{display:flex;align-items:center;gap:.6rem;min-height:3.4rem;padding:.4rem .7rem;border-radius:1rem;border:var(--bw) solid var(--line);background:var(--surface);font-weight:700;text-align:left}
+.sw[aria-pressed=true]{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent)}
+.themes{display:grid;grid-template-columns:repeat(auto-fill,minmax(10rem,1fr));gap:.6rem}
+.dot3{flex:none;width:2.1rem;height:2.1rem;border-radius:50%;border:1px solid rgba(128,128,128,.6)}
+.sizer{display:flex;align-items:center;gap:.6rem}
+.sizer .btn{min-width:3.6rem;font-size:1.2rem}
+.lvl{display:flex;gap:.35rem;flex:1;justify-content:center}
+.lvl i{width:.8rem;height:.8rem;border-radius:50%;background:var(--line)}
+.lvl i.on{background:var(--accent)}
+.tog{display:flex;align-items:center;justify-content:space-between;gap:1rem;width:100%;padding:.8rem 0;background:none;border:0;border-bottom:1px dashed var(--line);text-align:left;font-weight:700}
+.tog i{flex:none;width:3.2rem;height:1.8rem;border-radius:1rem;background:var(--line);position:relative;transition:background .2s}
+.tog i::after{content:'';position:absolute;top:.2rem;left:.2rem;width:1.4rem;height:1.4rem;border-radius:50%;background:var(--surface);transition:left .2s}
+.tog[aria-checked=true] i{background:var(--good)}
+.tog[aria-checked=true] i::after{left:1.6rem}
+
+/* modal + toast */
+.modal{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;justify-content:center;padding-top:env(safe-area-inset-top,0px)}
+.sheet{width:min(100%,34rem);max-height:92%;overflow:auto;background:var(--surface);color:var(--ink);border-radius:1.6rem 1.6rem 0 0;padding:1.2rem 1.2rem calc(1.2rem + env(safe-area-inset-bottom,0px));border:var(--bw) solid var(--line)}
+@media(min-width:700px){.modal{align-items:center}.sheet{border-radius:1.6rem}}
+.sheet h2{margin-bottom:.4rem}
+.okbig{width:4rem;height:4rem;border-radius:50%;background:var(--good);color:var(--good-ink);display:grid;place-items:center;margin-bottom:.6rem}
+.okbig svg{width:2.2rem;height:2.2rem}
+#toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:80;display:none;max-width:calc(100% - 2rem);padding:.7rem 1.1rem;border-radius:1rem;background:var(--ink);color:var(--bg);font-weight:700;text-align:center;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="intro" hidden></div>
+<div id="app" hidden>
+  <header class="top"><div class="wrap in" id="topin"></div></header>
+  <main id="main" tabindex="-1"></main>
+  <nav class="nav" aria-label="Main"><div class="in" id="navin"></div></nav>
+</div>
+<div id="modal" class="modal" hidden></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+'use strict';
+/* =====================================================================
+   SperoCare — single file. State lives in localStorage on this device.
+   ===================================================================== */
+
+/* ---------- constants ---------- */
+const TEXT_SIZES=[16,18,20,23,27];
+function mk(o){return {n:o.n,dark:!!o.dark,v:{'--bg':o.bg,'--surface':o.s,'--surface2':o.s2,'--ink':o.ink,'--ink2':o.ink2,'--line':o.line,'--accent':o.a,'--accent-ink':o.ai,'--good':o.g,'--good-ink':o.gi,'--bad':o.b,'--bad-ink':o.bi,'--c1':o.a,'--c2':o.c2,'--c3':o.c3,'--focus':o.f,'--bw':o.bw||'1.5px'}}}
+const THEMES={
+  jasmine:mk({n:['Jasmine','மல்லிகை'],bg:'#F7F6F0',s:'#FFFFFF',s2:'#E7EFE6',ink:'#1B2421',ink2:'#45524C',line:'#C9D2C8',a:'#1B6B52',ai:'#FFFFFF',g:'#1B7F4B',gi:'#FFFFFF',b:'#C62828',bi:'#FFFFFF',c2:'#D98E04',c3:'#3B7DD8',f:'#0B57D0'}),
+  sky:mk({n:['Sky','வானம்'],bg:'#EAF3FB',s:'#FFFFFF',s2:'#D8E9F7',ink:'#12212F',ink2:'#3F5468',line:'#BBD0E3',a:'#1A5BA6',ai:'#FFFFFF',g:'#1B7F4B',gi:'#FFFFFF',b:'#C62828',bi:'#FFFFFF',c2:'#E07B00',c3:'#1B7F4B',f:'#0B3D91'}),
+  marigold:mk({n:['Marigold','சாமந்தி'],bg:'#FFF3CF',s:'#FFFBEC',s2:'#FFE7A3',ink:'#2B2100',ink2:'#5A4710',line:'#E6CA7A',a:'#8A4B00',ai:'#FFFFFF',g:'#1B7F4B',gi:'#FFFFFF',b:'#C0262B',bi:'#FFFFFF',c2:'#1B6B52',c3:'#7A3EB5',f:'#0B57D0'}),
+  rose:mk({n:['Rose','ரோஜா'],bg:'#FFEEF1',s:'#FFFFFF',s2:'#FFDCE3',ink:'#2A1218',ink2:'#6A3A46',line:'#EDBFCA',a:'#A61E4D',ai:'#FFFFFF',g:'#1B7F4B',gi:'#FFFFFF',b:'#C62828',bi:'#FFFFFF',c2:'#1B6B52',c3:'#3B7DD8',f:'#0B57D0'}),
+  lavender:mk({n:['Lavender','லாவெண்டர்'],bg:'#F1EEFB',s:'#FFFFFF',s2:'#E2DCF6',ink:'#1E1838',ink2:'#4E4772',line:'#D0C8EC',a:'#4F35B5',ai:'#FFFFFF',g:'#1B7F4B',gi:'#FFFFFF',b:'#C62828',bi:'#FFFFFF',c2:'#D98E04',c3:'#1B7F4B',f:'#0B57D0'}),
+  night:mk({n:['Night','இரவு'],dark:1,bg:'#0F131B',s:'#1A202C',s2:'#232B3A',ink:'#F2F4F8',ink2:'#B7C0CE',line:'#3A4458',a:'#8CC8FF',ai:'#06121F',g:'#4ADE80',gi:'#06210F',b:'#FF8A8A',bi:'#2A0606',c2:'#FFC857',c3:'#7EE0A8',f:'#A9D6FF'}),
+  contrast:mk({n:['High contrast','அதிக மாறுபாடு'],dark:1,bg:'#000000',s:'#000000',s2:'#181818',ink:'#FFFFFF',ink2:'#F0F0F0',line:'#FFFFFF',a:'#FFD400',ai:'#000000',g:'#00E676',gi:'#000000',b:'#FF5252',bi:'#000000',c2:'#00E5FF',c3:'#FF9E40',f:'#00E5FF',bw:'2.5px'})
+};
+const THEME_ORDER=['jasmine','sky','marigold','rose','lavender','night','contrast'];
+
+const DAYS=[['Sunday','ஞாயிற்றுக்கிழமை'],['Monday','திங்கட்கிழமை'],['Tuesday','செவ்வாய்க்கிழமை'],['Wednesday','புதன்கிழமை'],['Thursday','வியாழக்கிழமை'],['Friday','வெள்ளிக்கிழமை'],['Saturday','சனிக்கிழமை']];
+const DAYS_S=[['Sun','ஞா'],['Mon','தி'],['Tue','செ'],['Wed','பு'],['Thu','வி'],['Fri','வெ'],['Sat','ச']];
+const MONTHS=[['January','ஜனவரி'],['February','பிப்ரவரி'],['March','மார்ச்'],['April','ஏப்ரல்'],['May','மே'],['June','ஜூன்'],['July','ஜூலை'],['August','ஆகஸ்ட்'],['September','செப்டம்பர்'],['October','அக்டோபர்'],['November','நவம்பர்'],['December','டிசம்பர்']];
+
+const MOODS={happy:{e:'😊',v:5},good:{e:'🙂',v:4},okay:{e:'😐',v:3},tired:{e:'😴',v:2},sad:{e:'😔',v:1},lonely:{e:'🥺',v:1}};
+const MOOD_ORDER=['happy','good','okay','tired','sad','lonely'];
+const CATS={medicine:'💊',water:'💧',walk:'🚶',meal:'🍽️',call:'📞',other:'⭐'};
+const GAME_ORDER=['name','yesno','pairs','missing','date','people'];
+const GAME_ICON={name:'🖼️',yesno:'✅',pairs:'🃏',missing:'🔍',date:'📅',people:'👪'};
+
+const ITEMS=[
+ {id:'apple',e:'🍎',en:'apple',ta:'ஆப்பிள்',c:'fruit'},
+ {id:'banana',e:'🍌',en:'banana',ta:'வாழைப்பழம்',c:'fruit'},
+ {id:'mango',e:'🥭',en:'mango',ta:'மாம்பழம்',c:'fruit'},
+ {id:'grapes',e:'🍇',en:'grapes',ta:'திராட்சை',c:'fruit',art:'a bunch of '},
+ {id:'watermelon',e:'🍉',en:'watermelon',ta:'தர்பூசணி',c:'fruit'},
+ {id:'pineapple',e:'🍍',en:'pineapple',ta:'அன்னாசிப்பழம்',c:'fruit'},
+ {id:'lemon',e:'🍋',en:'lemon',ta:'எலுமிச்சை',c:'fruit'},
+ {id:'coconut',e:'🥥',en:'coconut',ta:'தேங்காய்',c:'fruit'},
+ {id:'cow',e:'🐄',en:'cow',ta:'பசு',c:'animal'},
+ {id:'elephant',e:'🐘',en:'elephant',ta:'யானை',c:'animal'},
+ {id:'dog',e:'🐕',en:'dog',ta:'நாய்',c:'animal'},
+ {id:'cat',e:'🐈',en:'cat',ta:'பூனை',c:'animal'},
+ {id:'horse',e:'🐎',en:'horse',ta:'குதிரை',c:'animal'},
+ {id:'monkey',e:'🐒',en:'monkey',ta:'குரங்கு',c:'animal'},
+ {id:'peacock',e:'🦚',en:'peacock',ta:'மயில்',c:'animal'},
+ {id:'fish',e:'🐟',en:'fish',ta:'மீன்',c:'animal',m:1},
+ {id:'rooster',e:'🐓',en:'rooster',ta:'சேவல்',c:'animal'},
+ {id:'tomato',e:'🍅',en:'tomato',ta:'தக்காளி',c:'veg'},
+ {id:'carrot',e:'🥕',en:'carrot',ta:'கேரட்',c:'veg'},
+ {id:'brinjal',e:'🍆',en:'brinjal',ta:'கத்தரிக்காய்',c:'veg'},
+ {id:'onion',e:'🧅',en:'onion',ta:'வெங்காயம்',c:'veg'},
+ {id:'potato',e:'🥔',en:'potato',ta:'உருளைக்கிழங்கு',c:'veg'},
+ {id:'corn',e:'🌽',en:'corn',ta:'சோளம்',c:'veg',m:1},
+ {id:'house',e:'🏠',en:'house',ta:'வீடு',c:'home'},
+ {id:'clock',e:'🕐',en:'clock',ta:'கடிகாரம்',c:'home'},
+ {id:'umbrella',e:'☂️',en:'umbrella',ta:'குடை',c:'home'},
+ {id:'glasses',e:'👓',en:'glasses',ta:'கண்ணாடி',c:'home',art:'a pair of '},
+ {id:'phone',e:'☎️',en:'telephone',ta:'தொலைபேசி',c:'home'},
+ {id:'key',e:'🔑',en:'key',ta:'சாவி',c:'home'},
+ {id:'book',e:'📖',en:'book',ta:'புத்தகம்',c:'home'},
+ {id:'bed',e:'🛏️',en:'bed',ta:'கட்டில்',c:'home'},
+ {id:'chair',e:'🪑',en:'chair',ta:'நாற்காலி',c:'home'},
+ {id:'lamp',e:'🪔',en:'oil lamp',ta:'விளக்கு',c:'home'},
+ {id:'milk',e:'🥛',en:'milk',ta:'பால்',c:'food',m:1},
+ {id:'rice',e:'🍚',en:'rice',ta:'சாதம்',c:'food',m:1},
+ {id:'coffee',e:'☕',en:'coffee',ta:'காபி',c:'food',m:1},
+ {id:'egg',e:'🥚',en:'egg',ta:'முட்டை',c:'food'},
+ {id:'bread',e:'🍞',en:'bread',ta:'ரொட்டி',c:'food',m:1},
+ {id:'sun',e:'☀️',en:'sun',ta:'சூரியன்',c:'nature',art:'the '},
+ {id:'moon',e:'🌙',en:'moon',ta:'நிலா',c:'nature',art:'the '},
+ {id:'flower',e:'🌸',en:'flower',ta:'பூ',c:'nature'},
+ {id:'tree',e:'🌳',en:'tree',ta:'மரம்',c:'nature'},
+ {id:'star',e:'⭐',en:'star',ta:'நட்சத்திரம்',c:'nature'},
+ {id:'bus',e:'🚌',en:'bus',ta:'பேருந்து',c:'ride'},
+ {id:'bicycle',e:'🚲',en:'bicycle',ta:'சைக்கிள்',c:'ride'},
+ {id:'car',e:'🚗',en:'car',ta:'கார்',c:'ride'},
+ {id:'train',e:'🚆',en:'train',ta:'ரயில்',c:'ride'}
+];
+
+/* ---------- icons (stroke, inherit colour) ---------- */
+const IC={
+ home:'<path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10"/><path d="M10 20v-5h4v5"/>',
+ chat:'<path d="M21 12a8.5 8.5 0 0 1-12.3 7.6L3 21l1.5-5.2A8.5 8.5 0 1 1 21 12Z"/>',
+ games:'<rect x="3.5" y="3.5" width="7.5" height="7.5" rx="2"/><rect x="13" y="3.5" width="7.5" height="7.5" rx="2"/><rect x="3.5" y="13" width="7.5" height="7.5" rx="2"/><rect x="13" y="13" width="7.5" height="7.5" rx="2"/>',
+ bell:'<path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.8 2H4.2Z"/><path d="M10 21h4"/>',
+ family:'<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9.5" r="2.4"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M15.5 14.3c.5-.2 1-.3 1.5-.3 2.5 0 4 2 4 5"/>',
+ mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/>',
+ speaker:'<path d="M4 9.5v5h3.5L12.5 19V5L7.5 9.5Z"/><path d="M16 9a4.2 4.2 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/>',
+ check:'<path d="m4.5 12.5 5 5 10-11"/>',
+ x:'<path d="M5.5 5.5l13 13M18.5 5.5l-13 13"/>',
+ send:'<path d="M4 12 20 4l-4 16-4.5-6.5Z"/><path d="m11.5 13.5 8-9"/>',
+ back:'<path d="M14.5 5 7.5 12l7 7"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>',
+ trash:'<path d="M4 7h16M9 7V4h6v3M6.5 7l1 13h9l1-13"/>',
+ sos:'<path d="M12 3.5 22 20.5H2Z"/><path d="M12 10v5M12 18h.01"/>',
+ gear:'<path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/>',
+ chart:'<path d="M4 20V11M10 20V4M16 20v-7M22 20H2"/>'
+};
+function ic(n,c){return '<svg class="ic '+(c||'')+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+IC[n]+'</svg>'}
+
+/* ---------- state ---------- */
+const KEY='sperocare.v2';
+let memStore=null;
+function lsGet(){try{return localStorage.getItem(KEY)}catch(e){return memStore}}
+function lsSet(v){try{localStorage.setItem(KEY,v)}catch(e){memStore=v}}
+const DEF=()=>({name:'',lang:'en',theme:'jasmine',text:2,voiceReply:true,slow:false,done:false,famFrom:'',moods:[],games:[],reminders:[],remLog:{},alerts:[],msgs:[],photos:[],chat:[],chatDays:{},last:0});
+let S=(function(){try{const j=JSON.parse(lsGet()||'null');return Object.assign(DEF(),j||{})}catch(e){return DEF()}})();
+function save(){try{lsSet(JSON.stringify(S))}catch(e){}}
+function touch(){S.last=Date.now()}
+
+/* ---------- helpers ---------- */
+const $=(s,r)=>(r||document).querySelector(s);
+const $$=(s,r)=>Array.from((r||document).querySelectorAll(s));
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const dkey=(d)=>{d=d||new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())};
+const today=()=>dkey();
+const parseK=k=>{const p=k.split('-').map(Number);return new Date(p[0],p[1]-1,p[2])};
+const addDays=(k,n)=>{const d=parseK(k);d.setDate(d.getDate()+n);return dkey(d)};
+const dow=k=>parseK(k).getDay();
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const x=a[i];a[i]=a[j];a[j]=x}return a};
+const pickN=(a,n)=>shuffle(a).slice(0,n);
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const sum=(a,f)=>a.reduce((s,x)=>s+(f?f(x):x),0);
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const cap=s=>s?s.charAt(0).toUpperCase()+s.slice(1):s;
+const ta=()=>S.lang==='ta';
+const hasTamil=s=>/[\u0B80-\u0BFF]/.test(s);
+function t(k,v){let s=(STR[k]||[k,k])[ta()?1:0];if(v)for(const x in v)s=s.split('{'+x+'}').join(v[x]);return s}
+const dn=i=>DAYS[i][ta()?1:0], mn=i=>MONTHS[i][ta()?1:0];
+const dateLine=(d)=>{d=d||new Date();return dn(d.getDay())+', '+d.getDate()+' '+mn(d.getMonth())};
+const nm=it=>ta()?it.ta:it.en, nm2=it=>ta()?it.en:it.ta;
+function greet(){const h=new Date().getHours();return h>=5&&h<12?t('g_morning'):h<17&&h>=12?t('g_afternoon'):h>=17&&h<21?t('g_evening'):t('g_hello')}
+function fmtTime(hm){const p=hm.split(':').map(Number);const h=p[0],m=pad(p[1]);const h12=h%12===0?12:h%12;
+  if(ta()){const part=h>=4&&h<12?'காலை':h>=12&&h<16?'மதியம்':h>=16&&h<19?'மாலை':'இரவு';return part+' '+h12+':'+m}
+  return h12+':'+m+' '+(h<12?'AM':'PM')}
+const fmtClock=ts=>new Date(ts).toLocaleTimeString(ta()?'ta-IN':'en-IN',{hour:'numeric',minute:'2-digit'});
+function ago(ts){if(!ts)return t('never');const m=Math.round((Date.now()-ts)/60000);if(m<1)return t('just_now');if(m<60)return t('min_ago',{n:m});const h=Math.round(m/60);if(h<24)return t('hr_ago',{n:h});const d=Math.round(h/24);return d===1?t('yesterday'):t('days_ago',{n:d})}
+function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;let x=Math.imul(a^a>>>15,1|a);x=x+Math.imul(x^x>>>7,61|x)^x;return((x^x>>>14)>>>0)/4294967296}}
+
+/* ---------- theme + text size ---------- */
+function applyTheme(){
+  const th=THEMES[S.theme]||THEMES.jasmine, r=document.documentElement;
+  for(const k in th.v)r.style.setProperty(k,th.v[k]);
+  r.style.colorScheme=th.dark?'dark':'light';
+  r.style.setProperty('--root',TEXT_SIZES[Math.max(0,Math.min(4,S.text))]+'px');
+  r.lang=ta()?'ta':'en';
+}
+
+/* ---------- toast + modal ---------- */
+let toastT;
+function toast(msg,ms){const el=$('#toast');el.textContent=msg;el.style.display='block';clearTimeout(toastT);toastT=setTimeout(()=>{el.style.display='none'},ms||2800)}
+function openModal(html,cls){const m=$('#modal');m.innerHTML='<div class="sheet '+(cls||'')+'" role="dialog" aria-modal="true">'+html+'</div>';m.hidden=false;const f=m.querySelector('[data-autofocus]');if(f)f.focus()}
+function closeModal(){const m=$('#modal');m.hidden=true;m.innerHTML=''}
+const modalOpen=()=>!$('#modal').hidden;
+
+/* ---------- daily statistics ---------- */
+const moodOf=d=>{const a=S.moods.filter(x=>x.d===d);return a.length?a[a.length-1]:null};
+function remStats(d){
+  const lg=S.remLog[d];let total,done;
+  if(d===today()){total=S.reminders.length;done=lg?S.reminders.filter(r=>lg.done[r.id]).length:0}
+  else{total=lg?lg.total:0;done=lg?Object.keys(lg.done).length:0}
+  return {total:total,done:Math.min(done,total||done)};
+}
+function dayStats(d){
+  const gs=S.games.filter(x=>x.d===d);
+  const c=sum(gs,x=>x.c),n=sum(gs,x=>x.n);
+  const acc=n?Math.min(1,c/n):null;
+  const mood=moodOf(d),rs=remStats(d),chats=S.chatDays[d]||0;
+  const mins=sum(gs,x=>x.ms)/60000;
+  const any=gs.length>0||!!mood||rs.done>0||chats>0;
+  let score=null;
+  if(any){
+    let earned=Math.min(gs.length,2)/2*30+(acc||0)*30+(mood?10:0)+(chats?5:0),poss=75;
+    if(rs.total){earned+=rs.done/rs.total*25;poss+=25}
+    score=Math.round(earned/poss*100);
+  }
+  return {games:gs,sessions:gs.length,acc:acc,mood:mood,remTotal:rs.total,remDone:rs.done,chats:chats,mins:mins,any:any,score:score};
+}
+function lastDays(n){const t0=today();return Array.from({length:n},(_,i)=>addDays(t0,i-(n-1)))}
+function firstDate(){
+  const ds=[].concat(S.games.map(x=>x.d),S.moods.map(x=>x.d),Object.keys(S.remLog),Object.keys(S.chatDays)).sort();
+  return ds[0]||null;
+}
+function streak(){let d=today(),n=0;if(!dayStats(d).any)d=addDays(d,-1);while(n<400&&dayStats(d).any){n++;d=addDays(d,-1)}return n}
+function nextReminder(){
+  const d=today(),lg=S.remLog[d],now=new Date(),hm=pad(now.getHours())+':'+pad(now.getMinutes());
+  const open=S.reminders.filter(r=>!(lg&&lg.done[r.id])).sort((a,b)=>a.time<b.time?-1:1);
+  return open.find(r=>r.time>=hm)||open[0]||null;
+}
+function setRemDone(id,on){
+  const d=today();const lg=S.remLog[d]||(S.remLog[d]={done:{},total:0});
+  lg.total=S.reminders.length;
+  if(on)lg.done[id]=Date.now();else delete lg.done[id];
+  touch();save();
+}
+
+/* ---------- voice out (only when the person asks) ---------- */
+let voices=[];
+function loadVoices(){try{voices=speechSynthesis.getVoices()||[]}catch(e){}}
+if('speechSynthesis' in window){loadVoices();try{speechSynthesis.onvoiceschanged=loadVoices}catch(e){}}
+const spoken=s=>String(s).replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu,'').replace(/\s+/g,' ').trim();
+function speak(text,lang){
+  if(!('speechSynthesis' in window)){toast(t('no_voice'));return}
+  stopSpeak();
+  const l=lang||(hasTamil(text)?'ta':S.lang);
+  const u=new SpeechSynthesisUtterance(spoken(text));
+  u.lang=l==='ta'?'ta-IN':'en-IN';
+  const norm=v=>String(v.lang).toLowerCase().replace('_','-');
+  const v=l==='ta'?voices.find(x=>norm(x).startsWith('ta')):(voices.find(x=>norm(x).startsWith('en-in'))||voices.find(x=>norm(x).startsWith('en')));
+  if(v)u.voice=v;else if(l==='ta'&&voices.length)toast(t('no_ta_voice'),4000);
+  u.rate=S.slow?0.8:0.95;
+  try{speechSynthesis.speak(u)}catch(e){}
+}
+function stopSpeak(){try{speechSynthesis.cancel()}catch(e){}}
+
+/* ---------- voice in (mic) ---------- */
+let sr=null,listening=false,srCancel=false;
+function showListen(on,text){
+  const b=$('#listenbox');const mb=$('#micbtn');
+  if(mb)mb.setAttribute('aria-pressed',on?'true':'false');
+  if(!b)return;
+  b.hidden=!on;
+  if(on){const lt=$('#lt');if(lt)lt.textContent=text||t('speak_now')}
+}
+function stopListen(cancel){
+  srCancel=!!cancel;
+  if(sr){try{cancel?sr.abort():sr.stop()}catch(e){}}
+  if(cancel){listening=false;showListen(false)}
+}
+function startListen(){
+  const C=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!C){toast(t('no_mic_support'),4500);return}
+  if(listening){stopListen(false);return}
+  stopSpeak();srCancel=false;
+  let finalT='';
+  try{
+    sr=new C();sr.lang=ta()?'ta-IN':'en-IN';sr.interimResults=true;sr.continuous=false;sr.maxAlternatives=1;
+    sr.onstart=()=>{listening=true;showListen(true,'')};
+    sr.onresult=e=>{let interim='';for(let i=e.resultIndex;i<e.results.length;i++){const r=e.results[i];if(r.isFinal)finalT+=r[0].transcript;else interim+=r[0].transcript}showListen(true,finalT||interim)};
+    sr.onerror=e=>{listening=false;showListen(false);const c=e.error;if(c==='aborted')return;toast(c==='not-allowed'||c==='service-not-allowed'?t('mic_blocked'):c==='no-speech'?t('no_speech'):t('mic_err'),5000)};
+    sr.onend=()=>{listening=false;showListen(false);if(!srCancel&&finalT.trim())sendChat(finalT.trim(),{voice:true})};
+    sr.start();
+  }catch(e){listening=false;showListen(false);toast(t('mic_err'),4000)}
+}
+
+/* ---------- chat: quick local answers + Claude for natural talk ---------- */
+const JOKES={
+ en:['Why did the banana go to the doctor? Because it was not peeling well!','What do you call a sleeping bull? A bulldozer!','Why do eggs never tell jokes? They might crack up!'],
+ ta:['ஆசிரியர்: "ஒரு மரத்தில் பத்து குருவி இருக்கு. ஒண்ணை சுட்டா எத்தனை மிஞ்சும்?" மாணவன்: "ஒண்ணும் மிஞ்சாது சார், மத்ததெல்லாம் பறந்துடும்!"','அம்மா: "ஏண்டா தூங்கிட்டு இருக்க?" மகன்: "இல்லம்மா, கண்ணை மூடி யோசிச்சிட்டு இருக்கேன்!"','"என் கடிகாரம் ஓடலை." "அதுக்குக் கால் இல்லையே, அது எப்படி ஓடும்?"']
+};
+const STORY={
+ en:'Once, on a hot summer day, a thirsty crow found a pot with a little water at the bottom. Its beak could not reach. The crow thought for a while, then dropped small pebbles into the pot, one by one. Slowly the water rose, and the crow drank happily. With patience and a good idea, every problem has a way out.',
+ ta:'ஒரு கோடைக்காலத்தில் ஒரு காகத்துக்கு மிகவும் தாகம் எடுத்தது. தண்ணீரைத் தேடி அலைந்தபோது ஒரு பானையில் கொஞ்சம் தண்ணீர் இருப்பதைக் கண்டது. ஆனால் தண்ணீர் மிகவும் கீழே இருந்ததால் அதன் அலகு எட்டவில்லை. காகம் யோசித்து, சிறு கற்களை ஒவ்வொன்றாகப் பானைக்குள் போட்டது. தண்ணீர் மேலே வந்தது; காகம் மகிழ்ச்சியாகக் குடித்தது. பொறுமையும் நல்ல யோசனையும் இருந்தால் எந்தச் சிக்கலுக்கும் வழி கிடைக்கும்.'
+};
+const ACTS={games:{act:'go',to:'games',k:'nav_games'},remind:{act:'go',to:'remind',k:'nav_remind'},mood:{act:'go',to:'mood',k:'g_mood_short'},family:{act:'go',to:'family',k:'nav_family'},sos:{act:'sos',k:'help'}};
+function bi(en,tam){return ta()?tam:en}
+
+function localIntent(x){
+  const s=x.toLowerCase().trim(),n=S.name;
+  const has=re=>re.test(s);
+  /* safety first */
+  if(has(/chest pain|can'?t breathe|cannot breathe|breathless|i fell|fell down|fainted|unconscious|heart attack|bleeding|emergency|நெஞ்சு வலி|நெஞ்சுவலி|மூச்சு|விழுந்த|மயக்கம்|ஆபத்து|nenju vali|moochu|vizhundh|ambulance|ஆம்புலன்ஸ்/))
+    return {hard:1,a:'sos',text:bi('I am worried about you, '+n+'. Please press the red Help button now and call a family member or a doctor. For a medical emergency, call 108.','உங்களைப் பற்றி கவலையாக இருக்கிறது '+n+'. உடனே சிவப்பு "உதவி" பொத்தானை அழுத்துங்கள்; குடும்பத்தினரையோ மருத்துவரையோ அழையுங்கள். அவசர மருத்துவ உதவிக்கு 108-ஐ அழையுங்கள்.')};
+  if(has(/what('?s| is) the time|what time|time (is it|now)|நேரம்|time enna|மணி என்ன/)){
+    const now=new Date();return {hard:1,text:bi('It is '+fmtTime(pad(now.getHours())+':'+pad(now.getMinutes()))+' now.','இப்போது '+fmtTime(pad(now.getHours())+':'+pad(now.getMinutes()))+'.')}}
+  if(has(/what day|today'?s date|which day|date today|what'?s the date|இன்று என்ன|என்ன கிழமை|என்ன தேதி|indru enna|inniki|இன்னிக்கு/)){
+    const d=new Date();return {hard:1,text:bi('Today is '+dateLine(d)+' '+d.getFullYear()+'.','இன்று '+dateLine(d)+' '+d.getFullYear()+'.')}}
+  if(has(/my name|who am i|என் பெயர்|en peyar/))return {hard:1,text:bi('Your name is '+n+'.','உங்கள் பெயர் '+n+'.')};
+  if(has(/who are you|நீ யார்|நீங்கள் யார்|nee yaar|unga peyar enna|your name/))return {hard:1,text:bi('I am Spero, your friendly companion in SperoCare. I am always happy to talk with you.','நான் ஸ்பெரோ, SperoCare-ல் உங்கள் அன்பான துணை. உங்களுடன் பேசுவது எனக்கு எப்போதும் மகிழ்ச்சி.')};
+  if(has(/joke|funny|laugh|நகைச்சுவை|ஜோக்|சிரிக்க/))return {hard:1,text:pick(JOKES[S.lang])};
+  if(has(/story|கதை|kathai/))return {hard:1,text:STORY[S.lang]};
+  if(has(/\b(game|games|play)\b|விளையாட|vilaiyad/))return {hard:1,a:'games',text:bi('Lovely idea! Let us exercise the mind a little.','நல்ல யோசனை! மனதுக்குக் கொஞ்சம் பயிற்சி கொடுக்கலாம்.')};
+  if(has(/remind|medicine|tablet|pill|மருந்து|மாத்திரை|நினைவூட்ட|marunthu|mathirai/)){
+    const nx=nextReminder();
+    return {hard:1,a:'remind',text:nx?bi('Your next reminder is "'+nx.text+'" at '+fmtTime(nx.time)+'.','அடுத்த நினைவூட்டல்: "'+nx.text+'", '+fmtTime(nx.time)+'.'):bi('You have no reminders waiting. You can add one here.','காத்திருக்கும் நினைவூட்டல்கள் எதுவும் இல்லை. இங்கே புதிதாகச் சேர்க்கலாம்.')}}
+  if(has(/thank|நன்றி|nandri/))return {hard:1,text:bi('You are always welcome, '+n+'.','எப்போதும் மகிழ்ச்சி '+n+'.')};
+  /* soft matches: used only when Claude is not available */
+  if(has(/(^|\s)(hi|hello|hey)(\s|$|[!.,])|good (morning|afternoon|evening)|வணக்கம்|vanakkam/))return {text:bi(greet()+', '+n+'! How are you feeling today?',greet()+' '+n+'! இன்று எப்படி இருக்கிறீர்கள்?')};
+  if(has(/how are you|எப்படி இருக்க|epd?i iruk|eppadi iruk|நலமா|nalama/))return {text:bi('I am well, thank you for asking. It is nice to talk with you. And you, how is your day?','நான் நலமாக இருக்கிறேன், கேட்டதற்கு நன்றி. உங்களுடன் பேசுவது மகிழ்ச்சி. உங்கள் நாள் எப்படி போகிறது?')};
+  if(has(/lonely|alone|bored|boring|தனிமை|தனியா|போரடி|thanimai/))return {a:'family',text:bi('You are not alone, '+n+'. I am right here. Would you like to chat, hear a story, or read the messages from your family?','நீங்கள் தனியாக இல்லை '+n+'. நான் இங்கேயே இருக்கிறேன். பேசலாமா, கதை கேட்கலாமா, அல்லது குடும்பத்தின் செய்திகளைப் பார்க்கலாமா?')};
+  if(has(/\bsad\b|cry|upset|வருத்த|சோகம்|கவலை|kavalai|feel bad/))return {text:bi('I am sorry you feel this way. Take your time and tell me what is on your mind. I am listening.','வருந்துகிறேன். மெதுவாக உங்கள் மனதில் இருப்பதைச் சொல்லுங்கள். நான் கேட்டுக்கொண்டிருக்கிறேன்.')};
+  if(has(/tired|sleepy|சோர்வ|தூக்கம்|களைப்|thookkam/))return {text:bi('Then please rest a little and have some water. We can talk again whenever you like.','அப்படியானால் கொஞ்சம் ஓய்வெடுத்து, தண்ணீர் குடியுங்கள். எப்போது விரும்பினாலும் மீண்டும் பேசலாம்.')};
+  if(has(/happy|great|wonderful|மகிழ்ச்சி|சந்தோஷ|santhosh|magizhchi/))return {text:bi('That is wonderful to hear, '+n+'! What made your day nice?','கேட்கவே மகிழ்ச்சி '+n+'! இன்று என்ன நல்லது நடந்தது?')};
+  if(has(/water|thirsty|தண்ணீர்|தாகம்|thanni/))return {text:bi('A glass of water is a good idea. Drink slowly and sit comfortably.','ஒரு டம்ளர் தண்ணீர் குடிப்பது நல்லது. மெதுவாகக் குடியுங்கள், வசதியாக உட்காருங்கள்.')};
+  if(has(/hungry|food|eat|சாப்பாடு|பசி|sapadu|pasi/))return {text:bi('Please have something light and warm to eat. What do you like most for a meal?','லேசான, சூடான உணவு சாப்பிடுங்கள். உங்களுக்கு மிகவும் பிடித்த உணவு எது?')};
+  if(has(/bye|good night|see you|நாளை பார்க்கலாம்|போய் வர|சரி வர்றேன்/))return {text:bi('Take care, '+n+'. I will be here whenever you want to talk.','பத்திரமாக இருங்கள் '+n+'. பேச வேண்டும் என்றால் நான் இங்கேயே இருப்பேன்.')};
+  return null;
+}
+const FALLBACK={
+ en:['I understand. Tell me a little more, I am listening.','That sounds important to you. What happened next?','I am glad you shared that. How did it make you feel?','Hmm, I would like to hear more about that.'],
+ ta:['புரிகிறது. இன்னும் கொஞ்சம் சொல்லுங்கள், நான் கேட்கிறேன்.','அது உங்களுக்கு முக்கியமானது போலத் தெரிகிறது. பிறகு என்ன நடந்தது?','இதைப் பகிர்ந்ததில் மகிழ்ச்சி. அப்போது உங்களுக்கு எப்படி இருந்தது?','ம்ம், அதைப் பற்றி இன்னும் கேட்க விரும்புகிறேன்.']
+};
+
+let sampleFn=null,sampleOff=false;
+async function getSample(){
+  if(sampleOff)return null;if(sampleFn)return sampleFn;
+  try{if(!window.claude||!window.claude.use){sampleOff=true;return null}
+    const s=await window.claude.use('sample');if(!s){sampleOff=true;return null}sampleFn=s;return s}
+  catch(e){sampleOff=true;return null}
+}
+async function askClaude(text){
+  const s=await getSample();if(!s)return null;
+  const st=dayStats(today()),nx=nextReminder();
+  const hist=S.chat.slice(-9,-1).map(m=>(m.r==='u'?'Person: ':'Spero: ')+m.text).join('\n');
+  const prompt=[
+   'You are Spero, a warm and patient companion inside SperoCare, an app for older adults in Tamil Nadu, India.',
+   'App language: '+(ta()?'Tamil (தமிழ்), written in Tamil script':'English')+'. Use it unless the person clearly writes in the other language (Tamil script or Tamil typed in English letters counts as Tamil); then match them. Tamil replies must be in Tamil script.',
+   'Speak like a caring friend or a kind neighbour: simple everyday words, natural spoken style, 1 to 3 short sentences, at most one gentle question. No lists, no markdown, no emojis.',
+   'Never diagnose or advise on medicines. If they mention pain, a fall, breathlessness or feeling very unwell, tell them to press the red Help button and contact family or a doctor (ambulance 108).',
+   'If they seem sad or lonely, stay with them warmly without lecturing. Do not pretend to do things the app cannot do (phone calls, orders).',
+   'Facts you may use if helpful: their name is '+S.name+'; local time '+new Date().toLocaleTimeString('en-IN',{hour:'numeric',minute:'2-digit'})+'; today\'s mood check-in: '+(st.mood?st.mood.m:'not done yet')+'; next reminder: '+(nx?nx.text+' at '+nx.time:'none')+'.',
+   hist?('Conversation so far:\n'+hist):'',
+   'Person: '+text,
+   'Spero:'
+  ].filter(Boolean).join('\n\n');
+  const ctrl=typeof AbortController!=='undefined'?new AbortController():null;
+  const to=setTimeout(()=>{try{ctrl&&ctrl.abort()}catch(e){}},25000);
+  try{
+    const r=await s(prompt,{modelTier:'quick',cache:false,signal:ctrl?ctrl.signal:undefined});
+    const out=(r&&r.text||'').replace(/[*_#`]/g,'').trim();
+    return out||null;
+  }catch(e){if(e&&e.code==='not_granted')sampleOff=true;return null}
+  finally{clearTimeout(to)}
+}
+
+function bubbleHTML(m){
+  const a=m.a&&ACTS[m.a];
+  return '<div class="b '+m.r+'">'+esc(m.text)+
+    (m.r==='s'?'<div><button class="ls" data-act="say" data-say="'+esc(m.text)+'">'+ic('speaker')+t('listen')+'</button></div>':'')+
+    (a?'<button class="btn sm" data-act="'+a.act+'" data-to="'+(a.to||'')+'">'+t(a.k)+'</button>':'')+'</div>';
+}
+function scrollBottom(){requestAnimationFrame(()=>window.scrollTo(0,document.documentElement.scrollHeight))}
+function addMsg(r,text,a){
+  const m={r:r,text:text,t:Date.now()};if(a)m.a=a;
+  S.chat.push(m);if(S.chat.length>40)S.chat.shift();save();
+  const log=$('#chatlog');if(log){log.insertAdjacentHTML('beforeend',bubbleHTML(m));scrollBottom()}
+  return m;
+}
+function addTyping(){const log=$('#chatlog');if(!log)return null;log.insertAdjacentHTML('beforeend','<div class="b s typing" id="typing"><i></i><i></i><i></i></div>');scrollBottom();return $('#typing')}
+let chatBusy=false;
+async function sendChat(text,o){
+  o=o||{};text=String(text||'').trim();if(!text||chatBusy)return;
+  chatBusy=true;
+  addMsg('u',text);S.chatDays[today()]=(S.chatDays[today()]||0)+1;touch();save();
+  const ty=addTyping();
+  const loc=localIntent(text);
+  let reply,a;
+  try{
+    if(loc&&loc.hard){reply=loc.text;a=loc.a}
+    else{
+      reply=await askClaude(text);
+      if(!reply){const r=loc||{text:pick(FALLBACK[S.lang])};reply=r.text;a=r.a}
+    }
+  }finally{chatBusy=false}
+  if(ty)ty.remove();
+  addMsg('s',reply,a);
+  if(o.voice&&S.voiceReply)speak(reply);
+}
+
+/* ======================= VIEWS ======================= */
+let R='home',G=null,timers=[],introName='',remCat='medicine',moodJust=null,pendingPhoto=null;
+const VIEWS={};
+
+function viewIntro(){
+  return `<div class="intro"><div class="intro-in">
+    <h1 class="wordmark">SperoCare</h1>
+    <label class="lab" for="in-name">${t('i_name')}</label>
+    <input id="in-name" class="field" autocomplete="given-name" maxlength="30" value="${esc(introName)}" placeholder="${esc(t('i_name_ph'))}">
+    <div class="lab">${t('language')}</div>
+    <div class="seg">
+      <button class="btn ${S.lang==='en'?'primary':''}" data-act="setlang" data-l="en">English</button>
+      <button class="btn ${S.lang==='ta'?'primary':''}" data-act="setlang" data-l="ta">தமிழ்</button>
+    </div>
+    <button class="btn primary lg block" style="margin-top:1.5rem" data-act="start">${t('i_start')}</button>
+  </div></div>`;
+}
+
+function goals(){
+  const st=dayStats(today());
+  const g=[{done:!!st.mood,label:t('goal_mood'),to:'mood'},{done:st.sessions>0,label:t('goal_game'),to:'games'}];
+  g.push(S.reminders.length?{done:st.remTotal>0&&st.remDone>=st.remTotal,label:t('goal_rem'),to:'remind'}:{done:false,label:t('goal_addrem'),to:'remind',na:true});
+  return g;
+}
+
+VIEWS.home=function(){
+  const un=S.msgs.filter(m=>!m.read),nx=nextReminder(),gl=goals(),cnt=gl.filter(x=>x.done&&!x.na).length,tot=gl.filter(x=>!x.na).length;
+  return `<div class="wrap">
+    <section class="hello">
+      <p class="sm">${esc(greet())}</p>
+      <h1>${esc(S.name)}</h1>
+      <p class="sm">${esc(dateLine())}</p>
+      <div class="hello-mic">
+        <button class="mic-big" data-act="mic" aria-label="${esc(t('tap_speak'))}">${ic('mic')}</button>
+        <div><b class="disp" style="font-size:1.3rem">${t('tap_speak')}</b><br><button class="link" data-act="go" data-to="talk">${t('or_type')}</button></div>
+      </div>
+    </section>
+    ${un.map(m=>`<div class="msgcard"><div class="from">${esc(m.from)}</div><p style="font-size:1.1rem">${esc(m.text)}</p>
+      <div class="row" style="flex-wrap:wrap"><button class="btn sm" data-act="say" data-say="${esc(m.from+'. '+m.text)}">${ic('speaker')}${t('listen')}</button><button class="btn sm good" data-act="msgread" data-id="${m.id}">${ic('check')}${t('got_it')}</button></div></div>`).join('')}
+    <h2 class="sec">${t('goals')} <span class="sm">${cnt}/${tot}</span></h2>
+    <div class="goals">${gl.map(x=>`<button class="goal" data-act="go" data-to="${x.to}"><span class="tick ${x.done?'on':''}">${x.done?ic('check'):''}</span><span>${x.label}</span></button>`).join('')}</div>
+    ${nx?`<h2 class="sec">${t('next_rem')}</h2><div class="nextrem"><span class="big-e">${CATS[nx.cat]||'⭐'}</span><div class="grow1"><b>${esc(nx.text)}</b><div class="sm">${fmtTime(nx.time)}</div></div><button class="btn sm good" data-act="remdone" data-id="${nx.id}">${ic('check')}${t('done')}</button></div>`:''}
+    <div class="links"><button class="btn" data-act="go" data-to="progress">${ic('chart')}${t('my_progress')}</button><button class="btn" data-act="go" data-to="settings">${ic('gear')}${t('settings')}</button></div>
+  </div>`;
+};
+
+VIEWS.talk=function(){
+  const log=S.chat.slice(-30);
+  const first=log.length?'':bubbleHTML({r:'s',text:t('talk_hello',{n:S.name})});
+  const chips=['chip_morning','chip_joke','chip_lonely','chip_story','chip_day'];
+  return `<div class="wrap">
+    <h1>${t('talk_title')}</h1>
+    <p class="sm">${t('talk_sub')}</p>
+    <div id="chatlog" class="chatlog" aria-live="polite">${first}${log.map(bubbleHTML).join('')}</div>
+    <div class="chips">${chips.map(k=>`<button class="chip" data-act="chip" data-k="${k}">${t(k)}</button>`).join('')}</div>
+    <div id="listenbox" class="listenbox" hidden><span class="pulse">${ic('mic')}</span><div class="grow1"><b>${t('listening')}</b><div id="lt" class="lt"></div></div><button class="btn bad sm" data-act="mic">${t('stop')}</button></div>
+    <div class="composer">
+      <button id="micbtn" class="micbtn" data-act="mic" aria-label="${esc(t('tap_speak'))}" aria-pressed="false">${ic('mic')}</button>
+      <input id="chatin" class="field" placeholder="${esc(t('type_here'))}" maxlength="400" autocomplete="off">
+      <button class="btn primary" data-act="send" aria-label="${esc(t('send'))}">${ic('send')}<span>${t('send')}</span></button>
+    </div>
+  </div>`;
+};
+
+VIEWS.mood=function(){
+  const cur=moodOf(today());
+  const resp=moodJust?`<div class="panel" style="margin-top:1rem"><div class="row"><span class="big-e" style="font-size:3rem">${MOODS[moodJust].e}</span><div class="grow1"><b class="disp">${t('m_'+moodJust)}</b><p>${t('mr_'+moodJust,{n:esc(S.name)})}</p></div></div>
+    <div class="row" style="flex-wrap:wrap;margin-top:.6rem"><button class="btn sm" data-act="say" data-say="${esc(t('mr_'+moodJust,{n:S.name}))}">${ic('speaker')}${t('listen')}</button><button class="btn sm primary" data-act="go" data-to="talk">${ic('chat')}${t('nav_talk')}</button><button class="btn sm" data-act="go" data-to="home">${ic('home')}${t('nav_home')}</button></div></div>`:'';
+  return `<div class="wrap"><h1>${t('mood_q')}</h1><p class="sm">${t('mood_sub')}</p>${resp}
+    <div class="moods">${MOOD_ORDER.map(k=>`<button class="mb ${cur&&cur.m===k?'sel':''}" data-act="mood" data-m="${k}"><span>${MOODS[k].e}</span>${t('m_'+k)}</button>`).join('')}</div></div>`;
+};
+
+VIEWS.games=function(){
+  const td=dayStats(today());
+  return `<div class="wrap"><h1>${t('games_title')}</h1><p class="sm">${t('games_sub')}</p>
+    <div class="glist">${GAME_ORDER.map(k=>{
+      const n=td.games.filter(g=>g.g===k).length;
+      return `<button class="grow" data-act="pick" data-g="${k}"><span class="gi" aria-hidden="true">${GAME_ICON[k]}</span><span class="grow1"><b>${t('g_'+k)}</b><small>${t('g_'+k+'_d')}</small></span>${n?`<span class="badge">×${n}</span>`:''}</button>`}).join('')}</div>
+    <p class="sm" style="margin-top:1rem">${t('games_today',{n:td.sessions})}</p></div>`;
+};
+
+VIEWS.remind=function(){
+  const d=today(),lg=S.remLog[d]||{done:{}};
+  const list=S.reminders.slice().sort((a,b)=>a.time<b.time?-1:1);
+  const quick=[['medicine','08:00'],['water','11:00'],['walk','17:30'],['call','19:00']];
+  return `<div class="wrap"><h1>${t('rem_title')}</h1><p class="sm">${t('rem_sub')}</p>
+    <div class="panel" style="margin-top:1rem">
+      <div class="lab" style="margin-top:0">${t('rem_kind')}</div>
+      <div class="cats">${Object.keys(CATS).map(k=>`<button class="catb" data-act="cat" data-k="${k}" aria-pressed="${remCat===k}"><span>${CATS[k]}</span>${t('cat_'+k)}</button>`).join('')}</div>
+      <label class="lab" for="r-text">${t('rem_what')}</label>
+      <input id="r-text" class="field" maxlength="60" placeholder="${esc(t('rem_ph'))}">
+      <label class="lab" for="r-time">${t('rem_time')}</label>
+      <input id="r-time" class="field" type="time" value="08:00">
+      <button class="btn primary block" style="margin-top:1rem" data-act="remadd">${ic('plus')}${t('rem_add')}</button>
+      <div class="lab">${t('rem_quick')}</div>
+      <div class="chips" style="margin:0">${quick.map(q=>`<button class="chip" data-act="remquick" data-k="${q[0]}" data-tm="${q[1]}">${CATS[q[0]]} ${t('cat_'+q[0])} · ${fmtTime(q[1])}</button>`).join('')}</div>
+    </div>
+    <h2 class="sec">${t('rem_today')}</h2>
+    ${list.length?list.map(r=>{const dn=!!lg.done[r.id];return `<div class="rem ${dn?'done':''}"><span class="big-e">${CATS[r.cat]||'⭐'}</span><div class="grow1"><div class="tt">${esc(r.text)}</div><div class="sm">${fmtTime(r.time)}</div></div>
+      <button class="btn sm ${dn?'':'good'}" data-act="remtoggle" data-id="${r.id}">${dn?t('undo'):ic('check')+t('done')}</button>
+      <button class="btn sm" data-act="remdel" data-id="${r.id}" aria-label="${esc(t('delete'))}">${ic('trash')}</button></div>`}).join(''):`<p class="sm">${t('rem_empty')}</p>`}
+  </div>`;
+};
+
+VIEWS.progress=function(){
+  const days=lastDays(7),fd=firstDate();
+  const sc=days.map(d=>(!fd||d<fd)?null:(dayStats(d).score||0));
+  const lab=days.map(d=>DAYS_S[dow(d)][ta()?1:0]);
+  const gl=goals(),cnt=gl.filter(x=>x.done&&!x.na).length,tot=gl.filter(x=>!x.na).length;
+  const st=dayStats(today()),act=days.filter(d=>dayStats(d).any).length;
+  const stars='★'.repeat(cnt)+'☆'.repeat(Math.max(0,tot-cnt));
+  return `<div class="wrap"><h1>${t('my_progress')}</h1>
+    <div class="panel" style="margin-top:1rem;text-align:center"><div class="stars" aria-label="${cnt}/${tot}">${stars}</div><h2>${t('stars_today',{c:cnt,n:tot})}</h2><p class="sm">${cnt===tot&&tot?t('stars_all'):t('stars_more')}</p></div>
+    <div class="kpis"><div class="kpi"><b>${streak()}</b><span>${t('k_streak')}</span></div><div class="kpi"><b>${act}/7</b><span>${t('k_days')}</span></div><div class="kpi"><b>${st.sessions}</b><span>${t('k_games')}</span></div></div>
+    <div class="panel"><h3>${t('ch_score')}</h3>${barsSVG(sc,lab,{label:t('ch_score')})}</div>
+    <div class="links"><button class="btn primary" data-act="go" data-to="games">${ic('games')}${t('nav_games')}</button><button class="btn" data-act="go" data-to="home">${ic('home')}${t('nav_home')}</button></div></div>`;
+};
+
+/* ---------- charts (inline SVG, theme-aware) ---------- */
+function svgWrap(H,inner,label){return `<svg class="cs" viewBox="0 0 320 ${H}" role="img" aria-label="${esc(label||'')}">${inner}</svg>`}
+function barsSVG(vals,labels,o){
+  o=o||{};const W=320,H=o.h||170,pl=30,pr=6,pt=22,pb=24,iw=W-pl-pr,ih=H-pt-pb,n=vals.length,max=o.max||100,bw=Math.min(30,iw/n*.6);
+  let s='';
+  (o.grid||[0,50,100]).forEach(v=>{const y=pt+ih-ih*v/max;s+=`<line class="gl" x1="${pl}" x2="${W-pr}" y1="${y}" y2="${y}"/><text class="tx" x="${pl-5}" y="${y+4}" text-anchor="end">${v}</text>`});
+  vals.forEach((v,i)=>{const cx=pl+iw*(i+.5)/n;
+    if(v==null)s+=`<text class="tx" x="${cx}" y="${pt+ih-6}" text-anchor="middle">–</text>`;
+    else{const h=Math.max(3,ih*Math.min(v,max)/max),y=pt+ih-h;s+=`<rect class="bar${i===n-1?' now':''}" x="${cx-bw/2}" y="${y}" width="${bw}" height="${h}" rx="6"/><text class="tv" x="${cx}" y="${y-5}" text-anchor="middle">${Math.round(v)}</text>`}
+    s+=`<text class="tx" x="${cx}" y="${H-6}" text-anchor="middle">${esc(labels[i])}</text>`});
+  return svgWrap(H,s,o.label);
+}
+function moodSVG(vals,emos,labels,label){
+  const W=320,H=190,pl=32,pr=14,pt=28,pb=24,iw=W-pl-pr,ih=H-pt-pb,n=vals.length;
+  const X=i=>pl+iw*(i+.5)/n,Y=v=>pt+ih-ih*(v-1)/4;
+  let s='';
+  [[5,'😊'],[3,'😐'],[1,'😔']].forEach(a=>{s+=`<line class="gl" x1="${pl}" x2="${W-pr}" y1="${Y(a[0])}" y2="${Y(a[0])}"/><text class="em" x="${pl-6}" y="${Y(a[0])+5}" text-anchor="end">${a[1]}</text>`});
+  let d='',pen=false;
+  vals.forEach((v,i)=>{if(v==null){pen=false;return}d+=(pen?'L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1)+' ';pen=true});
+  if(d)s+=`<path class="line" d="${d}"/>`;
+  vals.forEach((v,i)=>{if(v!=null)s+=`<circle class="pt" cx="${X(i)}" cy="${Y(v)}" r="5"/><text class="em" x="${X(i)}" y="${Y(v)-11}" text-anchor="middle">${emos[i]}</text>`;
+    s+=`<text class="tx" x="${X(i)}" y="${H-6}" text-anchor="middle">${esc(labels[i])}</text>`});
+  return svgWrap(H,s,label);
+}
+function hbarsSVG(rows,label){
+  const W=320,rh=40,H=Math.max(50,rows.length*rh+4);let s='';
+  rows.forEach((r,i)=>{const y=i*rh+2;
+    s+=`<text class="tx2" x="0" y="${y+14}">${esc(r.label)}</text><text class="tv" x="${W}" y="${y+14}" text-anchor="end">${r.pct}%  <tspan class="tx">(${esc(r.sub)})</tspan></text><rect class="track" x="0" y="${y+21}" width="${W}" height="11" rx="5.5"/><rect class="bar" x="0" y="${y+21}" width="${Math.max(6,W*r.pct/100)}" height="11" rx="5.5"/>`});
+  return svgWrap(H,s,label);
+}
+function donutSVG(done,total,label){
+  const R=44,C=2*Math.PI*R,p=total?Math.min(1,done/total):0;
+  return `<svg class="cs donut" viewBox="0 0 120 120" role="img" aria-label="${esc(label)}"><circle class="track2" cx="60" cy="60" r="${R}"/><circle class="arc" cx="60" cy="60" r="${R}" stroke-dasharray="${(C*p).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 60 60)"/><text class="dn" x="60" y="67" text-anchor="middle">${done}/${total}</text></svg>`;
+}
+
+/* ---------- family dashboard ---------- */
+function insights(){
+  const out=[],d7=lastDays(7),fd=firstDate();
+  if(!fd)return [t('ins_none')];
+  out.push(t('ins_days',{n:d7.filter(d=>dayStats(d).any).length}));
+  const acc=days=>{const gs=S.games.filter(g=>days.indexOf(g.d)>=0),n=sum(gs,x=>x.n);return n?Math.min(1,sum(gs,x=>x.c)/n):null};
+  const a1=acc(d7),a0=acc(lastDays(14).slice(0,7));
+  if(a1!=null&&a0!=null){const df=Math.round((a1-a0)*100);out.push(df>=5?t('ins_up',{n:df}):df<=-10?t('ins_down',{n:-df}):t('ins_flat'))}
+  else if(a1!=null)out.push(t('ins_acc',{n:Math.round(a1*100)}));
+  const md=S.moods.map(m=>m).slice(-3);
+  if(md.length===3&&md.every(m=>MOODS[m.m].v<=2))out.push(t('ins_lowmood'));
+  let tot=0,dn=0;d7.forEach(d=>{const r=remStats(d);tot+=r.total;dn+=r.done});
+  if(tot)out.push(t('ins_rem',{n:Math.round(dn/tot*100)}));
+  const cnt={};S.games.filter(g=>d7.indexOf(g.d)>=0).forEach(g=>{cnt[g.g]=(cnt[g.g]||0)+1});
+  const fav=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a])[0];
+  if(fav)out.push(t('ins_fav',{g:t('g_'+fav)}));
+  return out;
+}
+function evTime(ts){const d=dkey(new Date(ts));return d===today()?fmtClock(ts):DAYS_S[new Date(ts).getDay()][ta()?1:0]+' '+fmtClock(ts)}
+function events(){
+  const ev=[];
+  S.games.slice(-25).forEach(g=>ev.push({t:g.t,x:g.g==='pairs'?t('ev_pairs',{g:t('g_'+g.g),c:g.c,n:g.n}):t('ev_game',{g:t('g_'+g.g),c:g.c,n:g.n})}));
+  S.moods.slice(-15).forEach(m=>ev.push({t:m.t,x:t('ev_mood',{m:MOODS[m.m].e+' '+t('m_'+m.m)})}));
+  lastDays(3).forEach(d=>{const lg=S.remLog[d];if(!lg)return;Object.keys(lg.done).forEach(id=>{const r=S.reminders.find(x=>x.id===id);ev.push({t:lg.done[id],x:t('ev_rem',{r:r?r.text:t('nav_remind')})})})});
+  S.alerts.slice(-5).forEach(a=>ev.push({t:a.t,x:t('ev_sos')}));
+  return ev.sort((a,b)=>b.t-a.t).slice(0,10);
+}
+VIEWS.family=function(){
+  const d0=today(),st=dayStats(d0),days=lastDays(7),fd=firstDate();
+  const lab=days.map(d=>DAYS_S[dow(d)][ta()?1:0]);
+  const sc=days.map(d=>(!fd||d<fd)?null:(dayStats(d).score||0));
+  const mv=days.map(d=>{const m=moodOf(d);return m?MOODS[m.m].v:null}),me=days.map(d=>{const m=moodOf(d);return m?MOODS[m.m].e:''});
+  const mins=days.map(d=>(!fd||d<fd)?null:Math.round(dayStats(d).mins*10)/10);
+  const mmax=Math.max(10,Math.ceil(Math.max.apply(null,mins.map(x=>x||0))/5)*5);
+  const from14=addDays(d0,-13);
+  const rows=GAME_ORDER.map(k=>{const gs=S.games.filter(g=>g.g===k&&g.d>=from14),n=sum(gs,x=>x.n);return gs.length&&n?{label:t('g_'+k),pct:Math.round(Math.min(1,sum(gs,x=>x.c)/n)*100),sub:gs.length+'×'}:null}).filter(Boolean);
+  const unseen=S.alerts.filter(a=>!a.seen);
+  const lg=S.remLog[d0]||{done:{}};
+  const rl=S.reminders.slice().sort((a,b)=>a.time<b.time?-1:1);
+  const ins=insights(),ev=events();
+  return `<div class="wrap">
+   <h1>${t('fam_title')}</h1>
+   <p class="sm">${t('fam_sub',{n:esc(S.name)})} · ${t('last_active')}: <b>${ago(S.last)}</b></p>
+   ${unseen.map(a=>`<div class="alert" role="alert">${ic('sos')}<div class="grow1"><b>${t('sos_banner',{t:fmtClock(a.t)})}</b></div><button class="btn sm" data-act="alertseen" data-id="${a.id}">${t('mark_seen')}</button></div>`).join('')}
+   <div class="kpis">
+     <div class="kpi"><b>${st.score==null?'–':st.score}</b><span>${t('k_score')}</span></div>
+     <div class="kpi"><b>${st.sessions}</b><span>${t('k_games')}</span></div>
+     <div class="kpi"><b>${st.acc==null?'–':Math.round(st.acc*100)+'%'}</b><span>${t('k_acc')}</span></div>
+     <div class="kpi"><b>${st.remDone}/${st.remTotal}</b><span>${t('k_rem')}</span></div>
+     <div class="kpi"><b>${st.mood?MOODS[st.mood.m].e:'–'}</b><span>${t('k_mood')}</span></div>
+     <div class="kpi"><b>${streak()}</b><span>${t('k_streak')}</span></div>
+   </div>
+   <div class="dgrid">
+     <div class="panel"><h3>${t('ch_score')}</h3>${barsSVG(sc,lab,{label:t('ch_score')})}
+       <details><summary>${t('score_how')}</summary><p class="sm">${t('score_how_d')}</p></details></div>
+     <div class="panel"><h3>${t('ch_mood')}</h3>${moodSVG(mv,me,lab,t('ch_mood'))}</div>
+     <div class="panel"><h3>${t('ch_acc')}</h3>${rows.length?hbarsSVG(rows,t('ch_acc')):`<p class="sm">${t('no_games_yet')}</p>`}</div>
+     <div class="panel"><h3>${t('ch_rem')}</h3>${donutSVG(st.remDone,st.remTotal,t('ch_rem'))}
+       <div style="margin-top:.6rem">${rl.length?rl.map(r=>`<div class="ev"><time>${fmtTime(r.time)}</time><div>${CATS[r.cat]||'⭐'} ${esc(r.text)} — <b>${lg.done[r.id]?t('done'):t('pending')}</b></div></div>`).join(''):`<p class="sm">${t('rem_empty')}</p>`}</div></div>
+     <div class="panel"><h3>${t('ch_mins')}</h3>${barsSVG(mins,lab,{max:mmax,grid:[0,mmax/2,mmax],label:t('ch_mins')})}</div>
+     <div class="panel"><h3>${t('ins_title')}</h3><ul class="ins">${ins.map(x=>`<li>${x}</li>`).join('')}</ul><p class="sm">${t('not_diag')}</p></div>
+     <div class="panel wide"><h3>${t('recent')}</h3>${ev.length?ev.map(e=>`<div class="ev"><time>${evTime(e.t)}</time><div>${esc(e.x)}</div></div>`).join(''):`<p class="sm">${t('no_activity')}</p>`}<p class="sm">${t('chat_private',{n:sum(days,d=>S.chatDays[d]||0)})}</p></div>
+     <div class="panel"><h3>${t('send_msg')}</h3>
+       <label class="lab" for="f-from" style="margin-top:0">${t('msg_from')}</label><input id="f-from" class="field" maxlength="20" value="${esc(S.famFrom)}" placeholder="${esc(t('family'))}">
+       <label class="lab" for="f-text">${t('msg_text')}</label><textarea id="f-text" class="field" maxlength="200" placeholder="${esc(t('msg_ph'))}"></textarea>
+       <button class="btn primary block" style="margin-top:.8rem" data-act="fsend">${ic('send')}${t('send')}</button>
+       ${S.msgs.slice(-3).reverse().map(m=>`<div class="ev"><time>${evTime(m.t)}</time><div><b>${esc(m.from)}:</b> ${esc(m.text)}<br><small class="sm">${m.read?t('msg_read'):t('msg_unread')}</small></div></div>`).join('')}</div>
+     <div class="panel"><h3>${t('lane')}</h3><p class="sm">${t('lane_d')}</p>
+       <div class="photos">${S.photos.map(p=>`<div class="ph"><img src="${p.img}" alt="${esc(p.name)}"><small>${esc(p.name)}<br>${esc(p.rel)}</small><button class="x" data-act="pdel" data-id="${p.id}" aria-label="${esc(t('delete'))}">${ic('x')}</button></div>`).join('')}</div>
+       <div id="prev"></div>
+       <label class="lab" for="f-photo">${t('lane_pick')}</label><input id="f-photo" class="field" type="file" accept="image/*">
+       <label class="lab" for="p-name">${t('lane_name')}</label><input id="p-name" class="field" maxlength="24">
+       <label class="lab" for="p-rel">${t('lane_rel')}</label><input id="p-rel" class="field" maxlength="24" placeholder="${esc(t('lane_rel_ph'))}">
+       <button class="btn primary block" style="margin-top:.8rem" data-act="padd">${ic('plus')}${t('lane_add')}</button></div>
+     <div class="panel"><h3>${t('alerts')}</h3>${S.alerts.length?S.alerts.slice(-6).reverse().map(a=>`<div class="ev"><time>${evTime(a.t)}</time><div>${t('ev_sos')} — <b>${a.seen?t('seen'):t('not_seen')}</b></div></div>`).join(''):`<p class="sm">${t('no_alerts')}</p>`}
+       <p class="sm">${t('sos_note')}</p></div>
+     <div class="panel wide"><h3>${t('data_tools')}</h3><p class="sm">${t('data_note')}</p>
+       <div class="links" style="margin-top:.4rem"><button class="btn" data-act="demo">${t('load_demo')}</button><button class="btn" data-act="erase">${t('erase')}</button></div></div>
+   </div></div>`;
+};
+
+/* ---------- settings + display sheet ---------- */
+function swatchesHTML(){
+  return `<div class="themes">${THEME_ORDER.map(k=>{const th=THEMES[k],v=th.v;
+    return `<button class="sw" data-act="theme" data-k="${k}" aria-pressed="${S.theme===k}"><span class="dot3" style="background:linear-gradient(90deg,${v['--bg']} 0 34%,${v['--accent']} 34% 67%,${v['--ink']} 67%)"></span>${th.n[ta()?1:0]}</button>`}).join('')}</div>`;
+}
+function sizerHTML(){
+  return `<div class="sizer"><button class="btn" data-act="tsize" data-d="-1" aria-label="${esc(t('smaller'))}" ${S.text<=0?'disabled':''}>A−</button><div class="lvl" aria-hidden="true">${TEXT_SIZES.map((_,i)=>`<i class="${i<=S.text?'on':''}"></i>`).join('')}</div><button class="btn" data-act="tsize" data-d="1" aria-label="${esc(t('bigger'))}" ${S.text>=4?'disabled':''}>A+</button></div><p style="margin-top:.6rem">${t('text_sample')}</p>`;
+}
+function langHTML(){return `<div class="seg"><button class="btn ${S.lang==='en'?'primary':''}" data-act="setlang" data-l="en">English</button><button class="btn ${S.lang==='ta'?'primary':''}" data-act="setlang" data-l="ta">தமிழ்</button></div>`}
+function openDisplay(){openModal(`<h2>${t('display')}</h2><div class="lab">${t('text_size')}</div>${sizerHTML()}<div class="lab">${t('themes')}</div>${swatchesHTML()}<div class="lab">${t('language')}</div>${langHTML()}<button class="btn primary block" style="margin-top:1.2rem" data-act="closemodal" data-autofocus>${t('ok')}</button>`,'disp')}
+const displayOpen=()=>modalOpen()&&$('#modal .sheet.disp');
+VIEWS.settings=function(){
+  return `<div class="wrap"><h1>${t('settings')}</h1>
+   <div class="panel" style="margin-top:1rem"><h3>${t('text_size')}</h3>${sizerHTML()}</div>
+   <div class="panel" style="margin-top:1rem"><h3>${t('themes')}</h3>${swatchesHTML()}</div>
+   <div class="panel" style="margin-top:1rem"><h3>${t('language')}</h3>${langHTML()}</div>
+   <div class="panel" style="margin-top:1rem"><h3>${t('voice')}</h3>
+     <button class="tog" role="switch" aria-checked="${S.voiceReply}" data-act="tvoice"><span>${t('voice_reply')}<br><small class="sm">${t('voice_reply_d')}</small></span><i></i></button>
+     <button class="tog" role="switch" aria-checked="${S.slow}" data-act="tslow"><span>${t('voice_slow')}</span><i></i></button></div>
+   <div class="panel" style="margin-top:1rem"><h3>${t('your_name')}</h3><input id="s-name" class="field" maxlength="30" value="${esc(S.name)}"><button class="btn block" style="margin-top:.6rem" data-act="rename">${t('save')}</button></div>
+   <p class="sm" style="margin-top:1rem">${t('device_note')}</p></div>`;
+};
+
+/* ======================= GAMES ======================= */
+function gameHeader(title,sub){
+  const dots=Array.from({length:G.total},(_,i)=>`<i class="${i<G.idx?(G.res&&G.res[i]?'ok':'no'):i===G.idx?'cur':''}"></i>`).join('');
+  return `<div class="phead"><button class="btn sm" data-act="gexit" aria-label="${esc(t('back'))}">${ic('back')}</button><div class="grow1"><h1 style="font-size:1.3rem">${title}</h1>${sub?`<p class="sm">${sub}</p>`:''}</div></div><div class="dots">${dots}</div>`;
+}
+function recordGame(kind,correct,total,ms){
+  S.games.push({g:kind,d:today(),c:correct,n:total,t:Date.now(),ms:ms||0});touch();save();
+}
+function finishScreen(kind,correct,total){
+  const pct=total?Math.round(correct/total*100):0;
+  const msg=pct>=80?t('res_great'):pct>=50?t('res_good'):t('res_try');
+  const stars='★'.repeat(Math.max(1,Math.round(pct/33.34)))+'☆'.repeat(3-Math.max(1,Math.round(pct/33.34)));
+  return `<div class="wrap"><div class="result"><div class="stars">${stars}</div><h1>${msg}</h1><p class="sm">${t('res_score',{c:correct,n:total})}</p>
+    <button class="btn primary lg block" data-act="pick" data-g="${kind}">${t('play_again')}</button>
+    <button class="btn block" data-act="go" data-to="games">${t('more_games')}</button>
+    <button class="btn block" data-act="go" data-to="home">${t('nav_home')}</button></div></div>`;
+}
+
+/* ---- 1. Name the picture (multiple choice) ---- */
+function startName(){
+  const pool=pickN(ITEMS,8);
+  G={kind:'name',total:pool.length,idx:0,correct:0,res:[],startedAt:Date.now(),
+     qs:pool.map(it=>{
+       const sameCat=ITEMS.filter(x=>x.id!==it.id&&x.c===it.c);
+       const distractors=sameCat.length>=2?pickN(sameCat,2):pickN(ITEMS.filter(x=>x.id!==it.id),2);
+       return {it:it,opts:shuffle([it].concat(distractors)).map(x=>x.id),locked:false};
+     })};
+  render();
+}
+function renderName(){
+  const q=G.qs[G.idx],it=q.it;
+  return `<div class="wrap">${gameHeader(t('g_name'))}
+    <p class="q">${t('name_q')}</p>
+    <div class="pic" aria-hidden="true">${it.e}</div>
+    <div class="opts">${q.opts.map(id=>{const o=ITEMS.find(x=>x.id===id);
+      const cls=q.locked?(id===it.id?'ok':(id===q.picked?'no':'')):'';
+      return `<button class="opt ${cls}" data-act="nameopt" data-id="${id}" ${q.locked?'disabled':''}>${cap(nm(o))}${ta()?'<small>'+cap(nm2(o))+'</small>':''}</button>`}).join('')}</div>
+    ${q.locked?`<div class="fb ${q.picked===it.id?'ok':'no'}">${q.picked===it.id?t('correct'):t('wrong_is',{a:cap(nm(it))})}</div><button class="btn primary lg block" data-act="next">${t('next')}</button>`:''}
+  </div>`;
+}
+function nameOpt(id){
+  const q=G.qs[G.idx];if(q.locked)return;q.locked=true;q.picked=id;
+  const ok=id===q.it.id;if(ok)G.correct++;G.res[G.idx]=ok;
+  speak(ok?t('correct'):t('wrong_is',{a:cap(nm(q.it))}));
+  render();
+}
+
+/* ---- 2. Yes / No (tap-only) ---- */
+function startYesno(){
+  const n=8,qs=[];
+  for(let i=0;i<n;i++){const it=pick(ITEMS);const wrong=Math.random()<0.5;const shown=wrong?pick(ITEMS.filter(x=>x.id!==it.id)):it;qs.push({it:it,shown:shown,ans:!wrong,locked:false})}
+  G={kind:'yesno',total:n,idx:0,correct:0,res:[],startedAt:Date.now(),qs:qs};render();
+}
+function renderYesno(){
+  const q=G.qs[G.idx];
+  return `<div class="wrap">${gameHeader(t('g_yesno'))}
+    <p class="q">${t('yn_q',{w:cap(nm(q.it))})}</p>
+    <div class="pic" aria-hidden="true">${q.shown.e}</div>
+    <div class="yn">
+      <button class="ynb good" data-act="ynopt" data-v="1" ${q.locked?'disabled':''}>${ic('check')}${t('yes')}</button>
+      <button class="ynb bad" data-act="ynopt" data-v="0" ${q.locked?'disabled':''}>${ic('x')}${t('no')}</button>
+    </div>
+    ${q.locked?`<div class="fb ${q.ok?'ok':'no'}">${q.ok?t('correct'):t('wrong_is',{a:cap(nm(q.shown))})}</div><button class="btn primary lg block" data-act="next">${t('next')}</button>`:''}
+  </div>`;
+}
+function ynOpt(v){
+  const q=G.qs[G.idx];if(q.locked)return;q.locked=true;
+  const said=v===1;q.ok=said===q.ans;if(q.ok)G.correct++;G.res[G.idx]=q.ok;
+  speak(q.ok?t('correct'):t('wrong_is',{a:cap(nm(q.shown))}));render();
+}
+
+/* ---- 3. Memory pairs ---- */
+function startPairs(){
+  const n=6,its=pickN(ITEMS,n);
+  const cards=shuffle(its.concat(its).map((it,i)=>({key:it.id+'_'+(i<n?'a':'b'),it:it})));
+  G={kind:'pairs',cards:cards,open:[],matched:{},moves:0,startedAt:Date.now(),locked:false};render();
+}
+function pairsGrid(){
+  const cols=G.cards.length<=8?4:6;
+  return `<div class="pgrid" style="--cols:${cols}">${G.cards.map((c,i)=>{
+    const up=G.open.indexOf(i)>=0||G.matched[c.key];
+    return `<button class="pc ${up?'up':''} ${G.matched[c.key]?'done':''}" data-act="pflip" data-i="${i}" ${up||G.locked?'disabled':''} aria-label="${up?esc(nm(c.it)):esc(t('card'))}">${up?c.it.e:'?'}</button>`}).join('')}</div>`;
+}
+function renderPairs(){
+  const done=Object.keys(G.matched).length/2;
+  return `<div class="wrap">${gameHeader(t('g_pairs'),t('pairs_progress',{d:done,n:G.cards.length/2}))}
+    <p class="q">${t('pairs_q')}</p>${pairsGrid()}
+    ${done===G.cards.length/2?`<div class="fb ok">${t('pairs_done',{n:G.moves})}</div><button class="btn primary lg block" data-act="pairsfinish">${t('continue')}</button>`:''}
+  </div>`;
+}
+function pairsFlip(i){
+  if(G.locked||G.open.indexOf(i)>=0||G.matched[G.cards[i].key])return;
+  G.open.push(i);
+  if(G.open.length===1){render();return}
+  G.locked=true;G.moves++;render();
+  const [a,b]=G.open,ca=G.cards[a],cb=G.cards[b];
+  timers.push(setTimeout(()=>{
+    if(ca.it.id===cb.it.id){G.matched[ca.key]=1;G.matched[cb.key]=1;speak(t('matched'))}
+    G.open=[];G.locked=false;render();
+  },ca.it.id===cb.it.id?550:900));
+}
+function pairsFinish(){recordGame('pairs',G.cards.length/2,G.cards.length/2,Date.now()-G.startedAt);render(finishScreenPairs())}
+function finishScreenPairs(){return finishScreen('pairs',G.cards.length/2,G.cards.length/2)}
+
+/* ---- 4. What's missing ---- */
+function startMissing(){
+  const n=6,rounds=5,qs=[];
+  for(let r=0;r<rounds;r++){const its=pickN(ITEMS,n);const miss=Math.floor(Math.random()*n);
+    qs.push({its:its,miss:miss,opts:shuffle([its[miss]].concat(pickN(ITEMS.filter(x=>its.indexOf(x)<0),2))).map(x=>x.id),phase:'show',locked:false})}
+  G={kind:'missing',total:rounds,idx:0,correct:0,res:[],startedAt:Date.now(),qs:qs};render();
+  timers.push(setTimeout(()=>{if(G&&G.kind==='missing'){G.qs[G.idx].phase='ask';render()}},4200));
+}
+function renderMissing(){
+  const q=G.qs[G.idx];
+  if(q.phase==='show')return `<div class="wrap">${gameHeader(t('g_missing'))}<p class="q">${t('missing_look')}</p>
+    <div class="mgrid">${q.its.map(it=>`<div class="mt">${it.e}</div>`).join('')}</div><p class="sm" style="text-align:center">${t('missing_wait')}</p></div>`;
+  return `<div class="wrap">${gameHeader(t('g_missing'))}<p class="q">${t('missing_q')}</p>
+    <div class="mgrid">${q.its.map((it,i)=>i===q.miss?`<div class="mt q0">?</div>`:`<div class="mt">${it.e}</div>`).join('')}</div>
+    <div class="opts">${q.opts.map(id=>{const o=ITEMS.find(x=>x.id===id),correctId=q.its[q.miss].id;
+      const cls=q.locked?(id===correctId?'ok':(id===q.picked?'no':'')):'';
+      return `<button class="opt ${cls}" data-act="missopt" data-id="${id}" ${q.locked?'disabled':''}>${cap(nm(o))}</button>`}).join('')}</div>
+    ${q.locked?`<div class="fb ${q.picked===q.its[q.miss].id?'ok':'no'}">${q.picked===q.its[q.miss].id?t('correct'):t('wrong_is',{a:cap(nm(q.its[q.miss]))})}</div><button class="btn primary lg block" data-act="next">${t('next')}</button>`:''}
+  </div>`;
+}
+function missOpt(id){
+  const q=G.qs[G.idx];if(q.locked||q.phase!=='ask')return;q.locked=true;q.picked=id;
+  const correctId=q.its[q.miss].id,ok=id===correctId;if(ok)G.correct++;G.res[G.idx]=ok;
+  speak(ok?t('correct'):t('wrong_is',{a:cap(nm(q.its[q.miss]))}));render();
+}
+
+/* ---- 5. What day / date ---- */
+function startDate(){
+  const n=5,qs=[];
+  for(let i=0;i<n;i++){const off=Math.floor(Math.random()*7)-3;const type=pick(['day','month']);
+    const base=new Date(),d=new Date(base);d.setDate(d.getDate()+off);
+    if(type==='day'){const correct=DAYS[d.getDay()][ta()?1:0];const others=shuffle(DAYS.map(x=>x[ta()?1:0]).filter(x=>x!==correct)).slice(0,2);
+      qs.push({type:'day',off:off,prompt:off===0?t('date_today'):off===1?t('date_tmr'):off===-1?t('date_ystd'):t('date_offset',{n:Math.abs(off),dir:off>0?t('after'):t('before')}),correct:correct,opts:shuffle([correct].concat(others)),locked:false});
+    }else{const correct=MONTHS[d.getMonth()][ta()?1:0];const others=shuffle(MONTHS.map(x=>x[ta()?1:0]).filter(x=>x!==correct)).slice(0,2);
+      qs.push({type:'month',off:off,prompt:t('date_month',{n:d.getDate()}),correct:correct,opts:shuffle([correct].concat(others)),locked:false});}
+  }
+  G={kind:'date',total:n,idx:0,correct:0,res:[],startedAt:Date.now(),qs:qs};render();
+}
+function renderDate(){
+  const q=G.qs[G.idx];
+  return `<div class="wrap">${gameHeader(t('g_date'))}<p class="q">${q.prompt}</p>
+    <div class="opts">${q.opts.map(o=>{const cls=q.locked?(o===q.correct?'ok':(o===q.picked?'no':'')):'';
+      return `<button class="opt ${cls}" data-act="dateopt" data-v="${esc(o)}" ${q.locked?'disabled':''}>${esc(o)}</button>`}).join('')}</div>
+    ${q.locked?`<div class="fb ${q.picked===q.correct?'ok':'no'}">${q.picked===q.correct?t('correct'):t('wrong_is',{a:q.correct})}</div><button class="btn primary lg block" data-act="next">${t('next')}</button>`:''}
+  </div>`;
+}
+function dateOpt(v){
+  const q=G.qs[G.idx];if(q.locked)return;q.locked=true;q.picked=v;
+  const ok=v===q.correct;if(ok)G.correct++;G.res[G.idx]=ok;
+  speak(ok?t('correct'):t('wrong_is',{a:q.correct}));render();
+}
+
+/* ---- 6. Family faces ---- */
+function startPeople(){
+  if(S.photos.length<2){G=null;openModal(`<h2>${t('people_none_t')}</h2><p>${t('people_none_d')}</p><button class="btn primary block" style="margin-top:1rem" data-act="closemodal" data-autofocus>${t('ok')}</button>`);render();return}
+  const n=Math.min(5,S.photos.length),qs=[];
+  const pool=pickN(S.photos,Math.min(n,S.photos.length));
+  pool.forEach(p=>{const others=pickN(S.photos.filter(x=>x.id!==p.id).map(x=>x.rel),Math.min(2,S.photos.length-1));
+    qs.push({p:p,opts:shuffle([p.rel].concat(others)),locked:false})});
+  G={kind:'people',total:qs.length,idx:0,correct:0,res:[],startedAt:Date.now(),qs:qs};render();
+}
+function renderPeople(){
+  const q=G.qs[G.idx];
+  return `<div class="wrap">${gameHeader(t('g_people'))}<p class="q">${t('people_q',{n:esc(q.p.name)})}</p>
+    <img class="photo" src="${q.p.img}" alt="${esc(q.p.name)}">
+    <div class="opts">${q.opts.map(rel=>{const cls=q.locked?(rel===q.p.rel?'ok':(rel===q.picked?'no':'')):'';
+      return `<button class="opt ${cls}" data-act="peopleopt" data-v="${esc(rel)}" ${q.locked?'disabled':''}>${esc(rel)}</button>`}).join('')}</div>
+    ${q.locked?`<div class="fb ${q.picked===q.p.rel?'ok':'no'}">${q.picked===q.p.rel?t('correct'):t('wrong_is',{a:q.p.rel})}</div><button class="btn primary lg block" data-act="next">${t('next')}</button>`:''}
+  </div>`;
+}
+function peopleOpt(v){
+  const q=G.qs[G.idx];if(q.locked)return;q.locked=true;q.picked=v;
+  const ok=v===q.p.rel;if(ok)G.correct++;G.res[G.idx]=ok;
+  speak(ok?t('correct'):t('wrong_is',{a:q.p.rel}));render();
+}
+
+const STARTERS={name:startName,yesno:startYesno,pairs:startPairs,missing:startMissing,date:startDate,people:startPeople};
+const RENDERERS={name:renderName,yesno:renderYesno,pairs:renderPairs,missing:renderMissing,date:renderDate,people:renderPeople};
+function nextQ(){
+  if(!G)return;
+  if(G.kind==='pairs')return;
+  if(G.idx<G.total-1){G.idx++;render()}
+  else{recordGame(G.kind,G.correct,G.total,Date.now()-G.startedAt);const k=G.kind,c=G.correct,n=G.total;G=null;R='gameover';render(finishScreen(k,c,n))}
+}
+function playGame(kind){G=null;R='game';history.replaceState(null,'',location.pathname);STARTERS[kind]();}
+
+/* ======================= STRINGS (English / Tamil) ======================= */
+const STR={
+ g_morning:['Good morning','காலை வணக்கம்'],g_afternoon:['Good afternoon','மதிய வணக்கம்'],g_evening:['Good evening','மாலை வணக்கம்'],g_hello:['Hello','வணக்கம்'],
+ i_name:['What should I call you?','உங்களை என்ன பெயரில் அழைக்கலாம்?'],i_name_ph:['Type your name','உங்கள் பெயரை எழுதுங்கள்'],language:['Language','மொழி'],
+ i_start:["Let's begin",'தொடங்குவோம்'],need_name:['Please type your name','தயவுசெய்து உங்கள் பெயரை எழுதுங்கள்'],
+ tap_speak:['Tap and speak','தட்டி பேசுங்கள்'],or_type:['or type a message instead','அல்லது எழுதி சொல்லலாம்'],
+ goals:["Today's goals",'இன்றைய இலக்குகள்'],goal_mood:['Share how you feel','நீங்கள் எப்படி இருக்கிறீர்கள் என்று சொல்லுங்கள்'],
+ goal_game:['Play one memory game','ஒரு நினைவாற்றல் விளையாட்டு விளையாடுங்கள்'],goal_rem:['Finish today\'s reminders','இன்றைய நினைவூட்டல்களை முடிக்கவும்'],
+ goal_addrem:['Add a daily reminder','ஒரு நாள் நினைவூட்டலைச் சேர்க்கவும்'],next_rem:['Next reminder','அடுத்த நினைவூட்டல்'],done:['Done','முடிந்தது'],
+ my_progress:['My progress','என் முன்னேற்றம்'],settings:['Settings','அமைப்புகள்'],got_it:['Got it','புரிந்தது'],
+ listen:['Listen','கேளுங்கள்'],never:['Not yet today','இன்னும் இல்லை'],just_now:['just now','இப்போது தான்'],
+ min_ago:['{n} min ago','{n} நிமிடம் முன்பு'],hr_ago:['{n} hr ago','{n} மணி நேரம் முன்பு'],yesterday:['yesterday','நேற்று'],days_ago:['{n} days ago','{n} நாட்கள் முன்பு'],
+
+ talk_title:['Talk with Spero','ஸ்பெரோவுடன் பேசுங்கள்'],talk_sub:['Tap the mic and speak, or type below.','மைக்கைத் தட்டிப் பேசுங்கள், அல்லது கீழே எழுதுங்கள்.'],
+ talk_hello:['Hello {n}! How are you feeling right now?','வணக்கம் {n}! இப்போது நீங்கள் எப்படி உணர்கிறீர்கள்?'],
+ chip_morning:['Good morning!','காலை வணக்கம்!'],chip_joke:['Tell me a joke','ஒரு நகைச்சுவை சொல்லுங்கள்'],
+ chip_lonely:["I'm feeling a little lonely",'கொஞ்சம் தனிமையாக உணர்கிறேன்'],chip_story:['Tell me a small story','ஒரு சிறிய கதை சொல்லுங்கள்'],
+ chip_day:['Let me tell you about my day','என் நாள் பற்றி சொல்கிறேன்'],
+ type_here:['Type a message…','ஒரு செய்தியை எழுதுங்கள்…'],send:['Send','அனுப்பு'],listening:['Listening…','கேட்டுக்கொண்டிருக்கிறேன்…'],
+ stop:['Stop','நிறுத்து'],speak_now:['Please speak now','இப்போது பேசுங்கள்'],
+ no_mic_support:['Voice input is not available in this browser. Please type instead.','இந்த உலாவியில் குரல் உள்ளீடு இல்லை. தயவுசெய்து எழுதுங்கள்.'],
+ mic_blocked:['Microphone access is blocked. Please allow it in browser settings.','மைக் அனுமதி மறுக்கப்பட்டது. உலாவி அமைப்புகளில் அனுமதிக்கவும்.'],
+ no_speech:['I did not hear anything. Please try again.','எதுவும் கேட்கவில்லை. மீண்டும் முயற்சிக்கவும்.'],
+ mic_err:['Something went wrong with the microphone.','மைக்கில் ஒரு பிழை ஏற்பட்டது.'],
+ no_voice:['This device cannot read text aloud.','இந்த சாதனத்தால் சத்தமாக படிக்க முடியவில்லை.'],
+ no_ta_voice:['A Tamil voice was not found on this device; using the closest voice available.','இந்த சாதனத்தில் தமிழ் குரல் இல்லை; கிடைக்கும் அருகிலான குரலைப் பயன்படுத்துகிறோம்.'],
+
+ mood_q:['How are you feeling today?','இன்று நீங்கள் எப்படி இருக்கிறீர்கள்?'],mood_sub:['Tap the one that matches how you feel.','உங்கள் உணர்வுக்கு பொருந்தும் ஒன்றைத் தட்டுங்கள்.'],
+ m_happy:['Happy','மகிழ்ச்சி'],m_good:['Good','நன்றாக'],m_okay:['Okay','சரியாக'],m_tired:['Tired','சோர்வு'],m_sad:['Sad','சோகம்'],m_lonely:['Lonely','தனிமை'],
+ mr_happy:["Wonderful to hear, {n}! Keep that smile going.",'கேட்கவே மகிழ்ச்சி {n}! அந்தப் புன்னகையை தொடருங்கள்.'],
+ mr_good:['Glad you are doing well today, {n}.','இன்று நீங்கள் நன்றாக இருப்பதில் மகிழ்ச்சி {n}.'],
+ mr_okay:['Thank you for telling me, {n}. I am here if you want to talk.','சொன்னதற்கு நன்றி {n}. பேச வேண்டும் என்றால் நான் இங்கே இருக்கிறேன்.'],
+ mr_tired:['Please rest a little, {n}, and drink some water.','கொஞ்சம் ஓய்வெடுங்கள் {n}, தண்ணீரும் குடியுங்கள்.'],
+ mr_sad:['I am sorry to hear that, {n}. I am right here with you.','வருந்துகிறேன் {n}. நான் உங்களுடனேயே இருக்கிறேன்.'],
+ mr_lonely:['You are not alone, {n}. Shall we talk for a while?','நீங்கள் தனியாக இல்லை {n}. கொஞ்சம் நேரம் பேசலாமா?'],
+ nav_talk:['Talk','பேசு'],
+
+ games_title:['Memory games','நினைவாற்றல் விளையாட்டுகள்'],games_sub:['Pick one to play. Take your time.','ஒன்றைத் தேர்ந்தெடுங்கள். நேரம் எடுத்துக்கொள்ளுங்கள்.'],
+ games_today:['Games played today: {n}','இன்று விளையாடிய விளையாட்டுகள்: {n}'],
+ g_name:['Name the picture','படத்தைப் பெயரிடுங்கள்'],g_name_d:['See a picture, choose its name.','ஒரு படத்தைப் பார்த்து, அதன் பெயரைத் தேர்வு செய்யுங்கள்.'],
+ g_yesno:['Yes or No','ஆம் அல்லது இல்லை'],g_yesno_d:['Look and tap the green or red button.','பார்த்து பச்சை அல்லது சிவப்பு பொத்தானைத் தட்டுங்கள்.'],
+ g_pairs:['Matching pairs','ஜோடி இணைத்தல்'],g_pairs_d:['Flip cards and find the matching pairs.','அட்டைகளைப் புரட்டி ஜோடிகளைக் கண்டுபிடியுங்கள்.'],
+ g_missing:["What's missing",'என்ன காணவில்லை'],g_missing_d:['Remember the pictures, find what disappeared.','படங்களை நினைவில் வையுங்கள், எது மறைந்தது எனக் கண்டுபிடியுங்கள்.'],
+ g_date:['Day and date','நாள் மற்றும் தேதி'],g_date_d:['A little practice with days and months.','நாட்கள் மற்றும் மாதங்களுடன் சிறிய பயிற்சி.'],
+ g_people:['Family faces','குடும்ப முகங்கள்'],g_people_d:['Match the photo to the family member.','புகைப்படத்தை குடும்ப உறுப்பினருடன் பொருத்துங்கள்.'],
+ people_none_t:['No photos yet','இன்னும் புகைப்படங்கள் இல்லை'],
+ people_none_d:['Ask your family to add a couple of photos from the Family Dashboard first.','குடும்பத்தினர் முதலில் குடும்ப பலகையிலிருந்து சில புகைப்படங்களைச் சேர்க்கச் சொல்லுங்கள்.'],
+ back:['Back','பின்'],card:['card','அட்டை'],correct:['That is correct!','அது சரி!'],wrong_is:['Not quite. It is {a}.','அப்படியில்லை. இது {a}.'],
+ next:['Next','அடுத்து'],continue:['Continue','தொடரவும்'],matched:['Matched!','பொருந்தியது!'],
+ name_q:['What is this?','இது என்ன?'],yn_q:['Is this a {w}?','இது ஒரு {w}வா?'],yes:['Yes','ஆம்'],no:['No','இல்லை'],
+ pairs_q:['Tap two cards to find a matching pair.','ஜோடி கண்டுபிடிக்க இரண்டு அட்டைகளைத் தட்டுங்கள்.'],
+ pairs_progress:['Pairs found: {d} of {n}','கண்டுபிடித்த ஜோடிகள்: {n}-ல் {d}'],pairs_done:['All pairs found in {n} tries!','{n} முயற்சிகளில் எல்லா ஜோடிகளும் கண்டுபிடிக்கப்பட்டன!'],
+ missing_look:['Look carefully and remember these.','கவனமாகப் பாருங்கள், இவற்றை நினைவில் வையுங்கள்.'],
+ missing_wait:['One will disappear in a moment…','சிறிது நேரத்தில் ஒன்று மறையும்…'],missing_q:['Which one disappeared?','எது மறைந்தது?'],
+ date_today:['What day is it today?','இன்று என்ன கிழமை?'],date_tmr:['What day is it tomorrow?','நாளை என்ன கிழமை?'],date_ystd:['What day was it yesterday?','நேற்று என்ன கிழமையாக இருந்தது?'],
+ date_offset:['What day is it {n} days {dir} today?','இன்றிலிருந்து {n} நாட்கள் {dir} என்ன கிழமையாக இருக்கும்?'],after:['after','பிறகு'],before:['before','முன்பு'],
+ date_month:['On the {n}th, which month are we in?','{n}-ஆம் தேதி, எந்த மாதம் நடக்கிறது?'],
+ people_q:['Who is this in the photo — {n}?','புகைப்படத்தில் இருப்பது யார் — {n}?'],
+ res_great:['Wonderful!','அருமை!'],res_good:['Well played!','நன்றாக விளையாடினீர்கள்!'],res_try:['Good try!','நல்ல முயற்சி!'],
+ res_score:['You got {c} out of {n} right.','{n}-ல் {c} சரியாக பதிலளித்தீர்கள்.'],play_again:['Play again','மீண்டும் விளையாடு'],more_games:['More games','மேலும் விளையாட்டுகள்'],
+ stars_today:['{c} of {n} stars earned today','இன்று {n}-ல் {c} நட்சத்திரங்கள்'],stars_all:['Wonderful — every goal is done today!','அருமை — இன்றைய எல்லா இலக்குகளும் முடிந்தன!'],
+ stars_more:['A little more to go today.','இன்னும் கொஞ்சம் மீதம்.'],
+ k_streak:['day streak','நாள் தொடர்ச்சி'],k_days:['active days','செயலில் இருந்த நாட்கள்'],k_games:['games today','இன்று விளையாட்டுகள்'],
+ ch_score:['Daily score (last 7 days)','தினசரி மதிப்பெண் (கடந்த 7 நாட்கள்)'],
+
+ rem_title:['Reminders','நினைவூட்டல்கள்'],rem_sub:['Simple reminders for medicine, water, and more.','மருந்து, தண்ணீர் மற்றும் பலவற்றிற்கான எளிய நினைவூட்டல்கள்.'],
+ rem_kind:['What kind?','எந்த வகை?'],cat_medicine:['Medicine','மருந்து'],cat_water:['Water','தண்ணீர்'],cat_walk:['Walk','நடைபயிற்சி'],
+ cat_meal:['Meal','உணவு'],cat_call:['Call family','குடும்பத்தை அழை'],cat_other:['Other','மற்றவை'],
+ rem_what:['What should I remind you?','நான் என்ன நினைவூட்ட வேண்டும்?'],rem_ph:['e.g. Take blood pressure tablet','உதா. இரத்த அழுத்த மாத்திரை'],
+ rem_time:['At what time?','என்ன நேரம்?'],rem_add:['Add reminder','நினைவூட்டலைச் சேர்'],rem_quick:['Or add quickly','அல்லது விரைவாகச் சேர்'],
+ rem_today:["Today's reminders",'இன்றைய நினைவூட்டல்கள்'],rem_empty:['No reminders added yet.','இன்னும் நினைவூட்டல்கள் இல்லை.'],undo:['Undo','திரும்பப்பெறு'],
+ fill_reminder:['Please write what to remind.','என்ன நினைவூட்ட வேண்டும் என்று எழுதுங்கள்.'],reminder_added:['Reminder added','நினைவூட்டல் சேர்க்கப்பட்டது'],
+ delete:['Delete','நீக்கு'],pending:['pending','நிலுவையில்'],
+
+ nav_home:['Home','முகப்பு'],nav_games:['Games','விளையாட்டு'],nav_remind:['Remind','நினைவூட்டு'],nav_family:['Family','குடும்பம்'],
+ help:['Help','உதவி'],sos_title:['Help is on the way','உதவி வருகிறது'],
+ sos_body:['Your family has been notified. Please stay where you are and stay calm. For a medical emergency, call 108.','உங்கள் குடும்பத்தினருக்குத் தெரிவிக்கப்பட்டது. நீங்கள் இருக்கும் இடத்திலேயே அமைதியாக இருங்கள். அவசர மருத்துவ உதவிக்கு 108-ஐ அழையுங்கள்.'],
+ ok:['OK','சரி'],cancel:['Cancel','ரத்து செய்'],
+
+ fam_title:['Family Dashboard','குடும்ப பலகை'],fam_sub:["{n}'s activity, shared with family",'{n}-இன் செயல்பாடு, குடும்பத்துடன் பகிரப்பட்டது'],
+ last_active:['Last active','கடைசியாக செயலில் இருந்தது'],mark_seen:['Mark seen','பார்த்ததாகக் குறி'],sos_banner:['Help button pressed at {t}','உதவி பொத்தான் {t}-க்கு அழுத்தப்பட்டது'],
+ k_score:['today\'s score','இன்றைய மதிப்பெண்'],k_acc:['accuracy','துல்லியம்'],k_rem:['reminders done','நினைவூட்டல்கள் முடிந்தன'],k_mood:['mood','மனநிலை'],
+ ch_mood:['Mood (last 7 days)','மனநிலை (கடந்த 7 நாட்கள்)'],ch_acc:['Accuracy by game (14 days)','விளையாட்டு வாரியாக துல்லியம் (14 நாட்கள்)'],
+ ch_rem:["Today's reminders",'இன்றைய நினைவூட்டல்கள்'],ch_mins:['Minutes playing (last 7 days)','விளையாடிய நிமிடங்கள் (கடந்த 7 நாட்கள்)'],
+ no_games_yet:['No games played in the last two weeks yet.','கடந்த இரண்டு வாரங்களில் இன்னும் விளையாட்டுகள் இல்லை.'],
+ score_how:['How is the score worked out?','மதிப்பெண் எப்படி கணக்கிடப்படுகிறது?'],
+ score_how_d:['It blends how many games were played, how many answers were correct, whether a mood was shared, whether reminders were completed, and whether there was a chat — just a simple, friendly summary, not a medical measurement.','எத்தனை விளையாட்டுகள் விளையாடப்பட்டன, எத்தனை பதில்கள் சரியாக இருந்தன, மனநிலை பகிரப்பட்டதா, நினைவூட்டல்கள் முடிந்தனவா, பேச்சு நடந்ததா என்பவற்றைச் சேர்த்து — இது ஒரு எளிய, நட்பான சுருக்கம் மட்டுமே, மருத்துவ அளவீடு அல்ல.'],
+ ins_title:['Gentle insights','மென்மையான கவனிப்புகள்'],not_diag:['These are friendly observations, not a medical diagnosis.','இவை நட்பான கவனிப்புகள், மருத்துவ கண்டறிதல் அல்ல.'],
+ ins_none:['Once your family member uses the app for a day or two, insights will appear here.','உங்கள் குடும்ப உறுப்பினர் ஓரிரு நாட்கள் பயன்படுத்திய பிறகு, கவனிப்புகள் இங்கே தோன்றும்.'],
+ ins_days:['Active on {n} of the last 7 days.','கடந்த 7 நாட்களில் {n} நாட்கள் செயலில் இருந்தார்.'],
+ ins_up:['Game accuracy improved by about {n}% this week — great progress.','இந்த வாரம் விளையாட்டு துல்லியம் சுமார் {n}% மேம்பட்டுள்ளது — சிறந்த முன்னேற்றம்.'],
+ ins_down:['Game accuracy dropped by about {n}% this week; a gentle check-in call might help.','இந்த வாரம் விளையாட்டு துல்லியம் சுமார் {n}% குறைந்துள்ளது; ஒரு அன்பான அழைப்பு உதவலாம்.'],
+ ins_flat:['Game accuracy has stayed steady this week.','இந்த வாரம் விளையாட்டு துல்லியம் நிலையாக இருந்தது.'],
+ ins_acc:['Average accuracy this week is about {n}%.','இந்த வாரம் சராசரி துல்லியம் சுமார் {n}%.'],
+ ins_lowmood:['Mood has been low for a few check-ins in a row; a phone call could bring some cheer.','சில முறை தொடர்ந்து மனநிலை தாழ்வாக உள்ளது; ஒரு அழைப்பு மகிழ்ச்சி தரலாம்.'],
+ ins_rem:['{n}% of reminders were completed this week.','இந்த வாரம் {n}% நினைவூட்டல்கள் முடிக்கப்பட்டன.'],
+ ins_fav:['The favourite game this week is {g}.','இந்த வாரம் விருப்பமான விளையாட்டு {g}.'],
+ recent:['Recent activity','சமீபத்திய செயல்பாடு'],no_activity:['No activity yet.','இன்னும் செயல்பாடு இல்லை.'],
+ chat_private:['{n} chat messages this week (chat content stays private).','இந்த வாரம் {n} அரட்டை செய்திகள் (அரட்டையின் உள்ளடக்கம் தனிப்பட்டதாக இருக்கும்).'],
+ ev_game:['Played {g} — {c}/{n} correct','{g} விளையாடினார் — {c}/{n} சரி'],ev_pairs:['Played {g} — completed in {n} tries','{g} விளையாடினார் — {n} முயற்சிகளில் முடிந்தது'],
+ ev_mood:['Shared mood: {m}','மனநிலையைப் பகிர்ந்தார்: {m}'],ev_rem:['Completed reminder: {r}','நினைவூட்டல் முடிந்தது: {r}'],ev_sos:['Pressed the Help button','உதவி பொத்தானை அழுத்தினார்'],
+ send_msg:['Send an encouraging message','ஊக்கமளிக்கும் செய்தி அனுப்புங்கள்'],msg_from:['Your name','உங்கள் பெயர்'],msg_text:['Message','செய்தி'],
+ msg_ph:['A short, warm note…','ஒரு சிறிய, அன்பான குறிப்பு…'],msg_read:['Read','படிக்கப்பட்டது'],msg_unread:['Not read yet','இன்னும் படிக்கவில்லை'],
+ fill_message:['Please write a short message.','ஒரு சிறிய செய்தியை எழுதுங்கள்.'],msg_sent:['Message sent','செய்தி அனுப்பப்பட்டது'],family:['Family','குடும்பம்'],
+ lane:['Family photo lane','குடும்ப புகைப்பட வரிசை'],lane_d:['Add a couple of familiar faces — they will be used in the Family Faces game too.','சில பரிச்சயமான முகங்களைச் சேருங்கள் — அவை Family Faces விளையாட்டிலும் பயன்படும்.'],
+ lane_pick:['Choose a photo','ஒரு புகைப்படத்தைத் தேர்வு செய்யவும்'],lane_name:['Name','பெயர்'],lane_rel:['Relationship','உறவு'],lane_rel_ph:['e.g. Daughter, Son, Grandson','உதா. மகள், மகன், பேரன்'],
+ lane_add:['Add photo','புகைப்படத்தைச் சேர்'],pick_photo_first:['Please choose a photo first.','முதலில் ஒரு புகைப்படத்தைத் தேர்வு செய்யுங்கள்.'],
+ fill_photo_fields:['Please add a name and relationship.','பெயரையும் உறவையும் சேர்க்கவும்.'],photo_added:['Photo added','புகைப்படம் சேர்க்கப்பட்டது'],
+ alerts:['Help alerts','உதவி விழிப்பூட்டல்கள்'],no_alerts:['No alerts. All calm.','விழிப்பூட்டல்கள் இல்லை. அமைதியாக உள்ளது.'],seen:['Seen','பார்க்கப்பட்டது'],not_seen:['Not seen yet','இன்னும் பார்க்கவில்லை'],
+ sos_note:['The red Help button anywhere in the app sends an alert here immediately.','ஆப்பில் எங்கிருந்தும் சிவப்பு உதவி பொத்தான் இங்கு உடனடியாக விழிப்பூட்டல் அனுப்பும்.'],
+ data_tools:['Demo data','டெமோ தரவு'],data_note:['Everything here is stored only on this device. Use these for a demo or to start fresh.','இங்குள்ள அனைத்தும் இந்த சாதனத்தில் மட்டுமே சேமிக்கப்படுகிறது. டெமோவிற்கோ புதிதாகத் தொடங்கவோ இவற்றைப் பயன்படுத்தலாம்.'],
+ load_demo:['Load sample activity','மாதிரி செயல்பாட்டை ஏற்று'],erase:['Erase all data','அனைத்து தரவையும் அழி'],demo_loaded:['Sample activity loaded','மாதிரி செயல்பாடு ஏற்றப்பட்டது'],
+ erase_confirm_t:['Erase everything?','அனைத்தையும் அழிக்கவா?'],erase_confirm_d:['This removes all activity, reminders, messages and photos from this device. This cannot be undone.','இது இந்தச் சாதனத்திலிருந்து அனைத்து செயல்பாடு, நினைவூட்டல், செய்திகள் மற்றும் புகைப்படங்களை நீக்கும். இதை மீட்க முடியாது.'],
+ demo_msg1:['So proud of you for using this every day. Love you!','இதை தினமும் பயன்படுத்துவதில் உங்களைப் பற்றி பெருமைப்படுகிறேன். உங்களை நேசிக்கிறேன்!'],
+
+ display:['Text size, theme & language','எழுத்து அளவு, தீம் & மொழி'],text_size:['Text size','எழுத்து அளவு'],smaller:['Smaller','சிறிதாக்கு'],bigger:['Bigger','பெரிதாக்கு'],
+ text_sample:['This is how text will look.','இப்படித்தான் எழுத்து தெரியும்.'],themes:['Theme','தீம்'],
+ jasmine:['Jasmine','மல்லிகை'],voice:['Voice','குரல்'],voice_reply:['Speak replies aloud','பதில்களை சத்தமாகப் படி'],
+ voice_reply_d:['Spero will read its chat replies out loud after you use the mic.','மைக் பயன்படுத்தும்போது ஸ்பெரோ பதில்களைச் சத்தமாகப் படிக்கும்.'],
+ voice_slow:['Speak more slowly','மெதுவாகப் பேசு'],your_name:['Your name','உங்கள் பெயர்'],save:['Save','சேமி'],name_saved:['Saved','சேமிக்கப்பட்டது'],
+ device_note:['SperoCare keeps everything on this device — nothing is sent anywhere except when you use the Talk page.','SperoCare எல்லாவற்றையும் இந்தச் சாதனத்தில் மட்டுமே வைத்திருக்கும் — "பேசு" பக்கத்தைத் தவிர வேறெதுவும் எங்கும் அனுப்பப்படாது.']
+};
+
+/* ======================= ROUTER / CHROME / HANDLERS ======================= */
+const NAV=[['home','home'],['talk','chat'],['games','games'],['remind','bell'],['family','family']];
+function renderChrome(){
+  $('#topin').innerHTML=`<button class="brand" data-act="go" data-to="home">SperoCare</button>
+    <button class="hb" data-act="opendisplay" aria-label="${esc(t('text_size'))}"><span class="aa">A<small>A</small></span></button>
+    <button class="hb help" data-act="sos">${ic('sos')}${t('help')}</button>`;
+  $('#navin').innerHTML=NAV.map(n=>`<button class="nb" data-act="go" data-to="${n[0]}" aria-current="${R===n[0]?'page':'false'}">${ic(n[1])}<span>${t('nav_'+n[0])}</span></button>`).join('');
+}
+function render(overrideHTML){
+  applyTheme();
+  if(R==='game'&&G){$('#main').innerHTML=RENDERERS[G.kind]();afterRender();return}
+  if(overrideHTML!=null){$('#main').innerHTML=overrideHTML;afterRender();return}
+  renderChrome();
+  const v=VIEWS[R]||VIEWS.home;
+  $('#main').innerHTML=v();
+  afterRender();
+}
+function afterRender(){
+  $$('.nb').forEach(b=>b.setAttribute('aria-current',(R===b.getAttribute('data-to'))?'page':'false'));
+  if(R==='talk')scrollBottom();
+  const ci=$('#chatin');
+  if(ci){ci.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();doSend()}}}
+}
+function go(view){
+  stopSpeak();if(listening)stopListen(true);
+  if(R==='game'&&G&&view!==null){G=null}
+  R=view;save();
+  $('#main').focus({preventScroll:true});
+  window.scrollTo(0,0);
+  render();
+}
+
+/* ---- top-level actions ---- */
+function doSend(){const el=$('#chatin');if(!el)return;const v=el.value;el.value='';sendChat(v,{voice:false})}
+function toggleMic(){startListen()}
+function doMood(m){
+  S.moods.push({m:m,d:today(),t:Date.now()});touch();save();moodJust=m;render();
+}
+function markMsgRead(id){const m=S.msgs.find(x=>x.id===id);if(m)m.read=true;save();render()}
+function remAdd(){
+  const tx=$('#r-text'),tm=$('#r-time');const text=(tx.value||'').trim();
+  if(!text){toast(t('fill_reminder'));tx.focus();return}
+  S.reminders.push({id:uid(),text:text,time:tm.value||'08:00',cat:remCat});touch();save();
+  toast(t('reminder_added'));tx.value='';render();
+}
+function remQuick(cat,tm){S.reminders.push({id:uid(),text:t('cat_'+cat),time:tm,cat:cat});touch();save();toast(t('reminder_added'));render()}
+function remToggle(id){const d=today(),lg=S.remLog[d]||(S.remLog[d]={done:{},total:S.reminders.length});setRemDone(id,!lg.done[id]);render()}
+function remDel(id){S.reminders=S.reminders.filter(r=>r.id!==id);save();render()}
+function famSend(){
+  const f=$('#f-from'),tx=$('#f-text');const text=(tx.value||'').trim();
+  if(!text){toast(t('fill_message'));return}
+  S.famFrom=(f.value||'').trim()||t('family');S.msgs.push({id:uid(),from:S.famFrom,text:text,t:Date.now(),read:false});save();
+  toast(t('msg_sent'));render();
+}
+function photoPreview(){
+  const inp=$('#f-photo');if(!inp||!inp.files||!inp.files[0]){pendingPhoto=null;const p=$('#prev');if(p)p.innerHTML='';return}
+  const file=inp.files[0],reader=new FileReader();
+  reader.onload=()=>{pendingPhoto=reader.result;const p=$('#prev');if(p)p.innerHTML=`<img src="${pendingPhoto}" alt="" style="width:5.5rem;aspect-ratio:1;object-fit:cover;border-radius:1rem;margin:.4rem 0">`};
+  reader.readAsDataURL(file);
+}
+function photoAdd(){
+  const nEl=$('#p-name'),rEl=$('#p-rel');
+  if(!pendingPhoto){toast(t('pick_photo_first'));return}
+  const name=(nEl.value||'').trim(),rel=(rEl.value||'').trim();
+  if(!name||!rel){toast(t('fill_photo_fields'));return}
+  S.photos.push({id:uid(),img:pendingPhoto,name:name,rel:rel});save();pendingPhoto=null;toast(t('photo_added'));render();
+}
+function photoDel(id){S.photos=S.photos.filter(p=>p.id!==id);save();render()}
+function alertSeen(id){const a=S.alerts.find(x=>x.id===id);if(a)a.seen=true;save();render()}
+function doSOS(){
+  S.alerts.push({id:uid(),t:Date.now(),seen:false});save();
+  openModal(`<div class="okbig">${ic('sos')}</div><h2>${t('sos_title')}</h2><p>${t('sos_body')}</p>
+    <button class="btn primary lg block" data-act="say" data-say="${esc(t('sos_body'))}" style="margin-top:.6rem">${ic('speaker')}${t('listen')}</button>
+    <button class="btn block" style="margin-top:.6rem" data-act="closemodal" data-autofocus>${t('ok')}</button>`);
+  speak(t('sos_body'));
+}
+function renameSave(){const el=$('#s-name');const v=(el.value||'').trim();if(v){S.name=v;save();toast(t('name_saved'));render()}}
+function setLang(l){
+  S.lang=l;save();
+  if(!S.done){introName=($('#in-name')&&$('#in-name').value)||introName;$('#intro').innerHTML=viewIntro();return}
+  if(displayOpen())openDisplay();render();
+}
+function setTheme(k){S.theme=k;save();if(displayOpen())openDisplay();render()}
+function setTextSize(d){S.text=Math.max(0,Math.min(4,S.text+d));save();applyTheme();if(displayOpen())openDisplay();else render()}
+function toggleVoiceReply(){S.voiceReply=!S.voiceReply;save();render()}
+function toggleSlow(){S.slow=!S.slow;save();render()}
+function loadDemo(){
+  const rnd=mulberry(42),d0=today();S.games=[];S.moods=[];S.remLog={};S.chatDays={};S.reminders=[
+    {id:uid(),text:t('cat_medicine'),time:'08:00',cat:'medicine'},{id:uid(),text:t('cat_water'),time:'11:00',cat:'water'},{id:uid(),text:t('cat_walk'),time:'17:30',cat:'walk'}];
+  for(let i=13;i>=0;i--){const d=addDays(d0,-i);if(rnd()<0.12&&i>0)continue;
+    const moodK=MOOD_ORDER[Math.min(5,Math.floor(rnd()*5+(i<4?1.2:0)))];S.moods.push({m:moodK,d:d,t:parseK(d).getTime()+9*3600000});
+    const ng=1+Math.floor(rnd()*2);for(let g=0;g<ng;g++){const kind=GAME_ORDER[Math.floor(rnd()*GAME_ORDER.length)];const n=6+Math.floor(rnd()*3);const acc=0.55+rnd()*0.4;S.games.push({g:kind,d:d,c:Math.round(n*acc),n:n,t:parseK(d).getTime()+(10+g*3)*3600000,ms:60000+rnd()*90000})}
+    const lg={done:{},total:S.reminders.length};S.reminders.forEach(r=>{if(rnd()<0.8)lg.done[r.id]=parseK(d).getTime()+8*3600000});S.remLog[d]=lg;
+    S.chatDays[d]=Math.floor(rnd()*3);
+  }
+  S.msgs=[{id:uid(),from:t('family'),text:t('demo_msg1'),t:Date.now()-3600000,read:false}];
+  S.photos=[];S.alerts=[{id:uid(),t:Date.now()-86400000*2,seen:true}];
+  touch();save();toast(t('demo_loaded'));render();
+}
+function eraseAll(){openModal(`<h2>${t('erase_confirm_t')}</h2><p>${t('erase_confirm_d')}</p>
+  <div class="row" style="margin-top:1rem"><button class="btn bad block" data-act="eraseconfirm">${t('erase')}</button><button class="btn block" data-act="closemodal" data-autofocus>${t('cancel')}</button></div>`)}
+function eraseConfirm(){
+  S=DEF();introName='';save();closeModal();stopSpeak();if(listening)stopListen(true);
+  R='home';G=null;
+  $('#app').hidden=true;$('#intro').hidden=false;$('#intro').innerHTML=viewIntro();
+  applyTheme();
+}
+
+/* ---- global click / input delegation ---- */
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]');if(!b)return;
+  const act=b.getAttribute('data-act');
+  if(act==='start'){
+    const nm=($('#in-name')&&$('#in-name').value||'').trim();
+    if(!nm){toast(t('need_name'));$('#in-name')&&$('#in-name').focus();return}
+    S.name=nm;S.done=true;touch();save();boot();return;
+  }
+  if(act==='setlang'){setLang(b.getAttribute('data-l'));return}
+  if(act==='go'){go(b.getAttribute('data-to'));return}
+  if(act==='mic'){toggleMic();return}
+  if(act==='send'){doSend();return}
+  if(act==='chip'){sendChat(t(b.getAttribute('data-k')),{voice:false});return}
+  if(act==='say'){speak(b.getAttribute('data-say'));return}
+  if(act==='mood'){doMood(b.getAttribute('data-m'));return}
+  if(act==='msgread'){markMsgRead(b.getAttribute('data-id'));return}
+  if(act==='remdone'){setRemDone(b.getAttribute('data-id'),true);render();return}
+  if(act==='remtoggle'){remToggle(b.getAttribute('data-id'));return}
+  if(act==='remdel'){remDel(b.getAttribute('data-id'));return}
+  if(act==='remadd'){remAdd();return}
+  if(act==='remquick'){remQuick(b.getAttribute('data-k'),b.getAttribute('data-tm'));return}
+  if(act==='cat'){remCat=b.getAttribute('data-k');render();return}
+  if(act==='pick'){playGame(b.getAttribute('data-g'));return}
+  if(act==='gexit'){G=null;go('games');return}
+  if(act==='next'){nextQ();return}
+  if(act==='nameopt'){nameOpt(b.getAttribute('data-id'));return}
+  if(act==='ynopt'){ynOpt(+b.getAttribute('data-v'));return}
+  if(act==='pflip'){pairsFlip(+b.getAttribute('data-i'));return}
+  if(act==='pairsfinish'){pairsFinish();return}
+  if(act==='missopt'){missOpt(b.getAttribute('data-id'));return}
+  if(act==='dateopt'){dateOpt(b.getAttribute('data-v'));return}
+  if(act==='peopleopt'){peopleOpt(b.getAttribute('data-v'));return}
+  if(act==='fsend'){famSend();return}
+  if(act==='padd'){photoAdd();return}
+  if(act==='pdel'){photoDel(b.getAttribute('data-id'));return}
+  if(act==='alertseen'){alertSeen(b.getAttribute('data-id'));return}
+  if(act==='sos'){doSOS();return}
+  if(act==='rename'){renameSave();return}
+  if(act==='theme'){setTheme(b.getAttribute('data-k'));return}
+  if(act==='tsize'){setTextSize(+b.getAttribute('data-d'));return}
+  if(act==='tvoice'){toggleVoiceReply();return}
+  if(act==='tslow'){toggleSlow();return}
+  if(act==='opendisplay'){openDisplay();return}
+  if(act==='closemodal'){closeModal();return}
+  if(act==='demo'){loadDemo();return}
+  if(act==='erase'){eraseAll();return}
+  if(act==='eraseconfirm'){eraseConfirm();return}
+});
+document.addEventListener('change',e=>{if(e.target&&e.target.id==='f-photo')photoPreview()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modalOpen())closeModal()});
+$('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal()});
+
+/* ---- boot ---- */
+function boot(){
+  applyTheme();
+  $('#intro').hidden=true;$('#intro').innerHTML='';$('#app').hidden=false;
+  R=S.done?(R==='intro-reset'?'home':R):'home';
+  if(!S.done)R='home';
+  render();
+}
+(function init(){
+  applyTheme();
+  if(S.done){boot();}
+  else{introName='';$('#intro').hidden=false;$('#intro').innerHTML=viewIntro();$('#app').hidden=true;}
+  window.addEventListener('pagehide',()=>{stopSpeak();if(listening)stopListen(true)});
+})();
+</script>
+</body>
+</html>
